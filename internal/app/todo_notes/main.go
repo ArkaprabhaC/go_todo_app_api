@@ -13,7 +13,7 @@ import (
 func main() {
 
 	log := logger.Logger()
-	log.Infof("Hello World by %s", "Arkaprabha!")
+	log.Infof("Starting up application...")
 	db := database.GetDatabaseConnection()
 
 	router := gin.Default()

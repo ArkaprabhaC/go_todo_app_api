@@ -30,9 +30,8 @@ func GetDatabaseConnection() *sql.DB {
 	if err != nil {
 		log.Fatalf("Unable to open a connection to database. ", err)
 	}
-
-	err = db.Ping()
-	if err != nil {
+	
+	if err = db.Ping(); err != nil {
 		log.Fatalf("Unable to ping database.", err)
 	}
 	return db
