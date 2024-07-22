@@ -24,17 +24,17 @@ type DatabaseConfig struct {
 }
 
 const (
-	configPath = "./internal/app/config"
-	configName = "config"
-	configType = "json"
+	CONFIGPATH = "./internal/app/config"
+	CONFIGNAME = "config"
+	CONFIGTYPE = "json"
 )
 
 func ReadConfig() Config {
 	log := logger.Logger()
 	config := Config{}
-	viper.AddConfigPath(configPath)
-	viper.SetConfigName(configName)
-	viper.SetConfigType(configType)
+	viper.AddConfigPath(CONFIGPATH)
+	viper.SetConfigName(CONFIGNAME)
+	viper.SetConfigType(CONFIGTYPE)
 
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Unable to read config file. %s", err)

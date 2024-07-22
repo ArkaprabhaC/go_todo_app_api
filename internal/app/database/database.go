@@ -11,8 +11,10 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var POSTGRES = "postgres"
-var MIGRATION_FILES_PATH = "file://internal/app/database/migrations"
+const(
+	POSTGRES = "postgres"
+	MIGRATION_FILES_PATH = "file://internal/app/database/migrations"
+)
 var DATA_SOURCE_URL = createDataSourceString()
 
 func createDataSourceString() (datasource string) {
