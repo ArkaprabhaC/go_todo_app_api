@@ -1,16 +1,26 @@
 package route
 
 import (
-	"database/sql"
-
+	"github.com/ArkaprabhaC/go_todo_app_api/internal/app/controller"
+	"github.com/ArkaprabhaC/go_todo_app_api/internal/app/repository"
+	"github.com/ArkaprabhaC/go_todo_app_api/internal/app/service"
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 )
 
-func InitRoutes(r *gin.Engine, db *sql.DB) {
 
-	apiV1 := r.Group("/api/v1/")
+func InitRoutes(r *gin.Engine, db *sqlx.DB) {
+
+	notesRepository := repository.NewNotesRepository(db)
+	notesService := service.NewNotesService(*notesRepository)
+	notesController := controller.NewNotesController(*notesService)
+
+	rgV1 := r.Group("/api/v1")
 	{
-		apiV1.GET("/hello", func(ctx *gin.Context) { ctx.JSON(200, "Hello World")})
+		route := rgV1.Group("/notes")
+		{
+			route.POST("/", notesController.CreateNote)
+		}
 	}
 
 }

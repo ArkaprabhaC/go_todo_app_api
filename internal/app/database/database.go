@@ -1,13 +1,14 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
-	"github.com/golang-migrate/migrate/v4"
+
 	"github.com/ArkaprabhaC/go_todo_app_api/internal/app/config"
 	"github.com/ArkaprabhaC/go_todo_app_api/internal/app/logger"
-    _ "github.com/golang-migrate/migrate/v4/database/postgres"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
@@ -32,9 +33,9 @@ func createDataSourceString() (datasource string) {
 	return
 }
 
-func GetDatabaseConnection() *sql.DB {
+func GetDatabaseConnection() *sqlx.DB {
 	log := logger.Logger()
-	db, err := sql.Open(POSTGRES, DATA_SOURCE_URL)
+	db, err := sqlx.Open(POSTGRES, DATA_SOURCE_URL)
 	if err != nil {
 		log.Fatalf("Unable to open a connection to database. %s", err)
 	}

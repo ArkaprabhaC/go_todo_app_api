@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-
 	log := logger.Logger()
 	log.Infof("Starting up application...")
 	
