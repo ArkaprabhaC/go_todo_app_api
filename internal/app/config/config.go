@@ -24,7 +24,7 @@ type DatabaseConfig struct {
 }
 
 const (
-	configPath = "./internal/app/todo_notes/config"
+	configPath = "./internal/app/config"
 	configName = "config"
 	configType = "json"
 )

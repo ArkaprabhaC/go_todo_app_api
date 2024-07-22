@@ -44,12 +44,12 @@ func GetDatabaseConnection() *sql.DB {
 
 func RunMigrations() {
 	log := logger.Logger()
-	migrate, err := migrate.New("file://internal/app/todo_notes/database/migrations", createDataSourceString())
+	m, err := migrate.New("file://internal/app/database/migrations", createDataSourceString())
 	if err != nil {
 		log.Fatalf("Error while running migrations: %s", err)
 	}
 
-	if err = migrate.Up(); err != nil {
+	if err = m.Up(); err != migrate.ErrNoChange && err != nil {
 		log.Fatalf("Error while running migrations: %s", err)
 	}
 }
