@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/ArkaprabhaC/go_todo_app_api/internal/app/todo_notes/logger"
+	"github.com/ArkaprabhaC/go_todo_app_api/internal/app/logger"
 	"github.com/spf13/viper"
 )
 
