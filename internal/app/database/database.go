@@ -11,6 +11,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var POSTGRES = "postgres"
+var MIGRATION_FILES_PATH = "file://internal/app/database/migrations"
 var DATA_SOURCE_URL = createDataSourceString()
 
 func createDataSourceString() (datasource string) {
@@ -30,7 +32,7 @@ func createDataSourceString() (datasource string) {
 
 func GetDatabaseConnection() *sql.DB {
 	log := logger.Logger()
-	db, err := sql.Open("postgres", DATA_SOURCE_URL)
+	db, err := sql.Open(POSTGRES, DATA_SOURCE_URL)
 	if err != nil {
 		log.Fatalf("Unable to open a connection to database. %s", err)
 	}
@@ -44,7 +46,7 @@ func GetDatabaseConnection() *sql.DB {
 
 func RunMigrations() {
 	log := logger.Logger()
-	m, err := migrate.New("file://internal/app/database/migrations", createDataSourceString())
+	m, err := migrate.New(MIGRATION_FILES_PATH, createDataSourceString())
 	if err != nil {
 		log.Fatalf("Error while running migrations: %s", err)
 	}
