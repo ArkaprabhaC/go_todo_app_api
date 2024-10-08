@@ -13,7 +13,7 @@ import (
 )
 
 
-func InitRoutes(engine *gin.Engine, db *sqlx.DB) {
+func InitializeRoutes(engine *gin.Engine, db *sqlx.DB) {
 
 	notesRepository := repository.NewNotesRepository(db)
 	notesService := service.NewNotesService(*notesRepository)

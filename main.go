@@ -17,11 +17,11 @@ func main() {
 	database.RunMigrations()
 	db := database.GetDatabaseConnection()
 
-	router := gin.Default()
-	route.InitRoutes(router, db)
+	engine := gin.Default()
+	route.InitializeRoutes(engine, db)
 
 	config := config.ReadConfig()
 	server_addr := fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port)
-	router.Run(server_addr)
+	engine.Run(server_addr)
 
 }
