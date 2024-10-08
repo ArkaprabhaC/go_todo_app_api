@@ -10,6 +10,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	"go.uber.org/zap"
 )
 
 const(
@@ -34,7 +35,8 @@ func createDataSourceString() (datasource string) {
 }
 
 func GetDatabaseConnection() *sqlx.DB {
-	log := logger.Logger()
+	log := logger.Logger().
+		With(zap.String("method", "database.GetDatabaseConnection"))
 	db, err := sqlx.Open(POSTGRES, DATA_SOURCE_URL)
 	if err != nil {
 		log.Fatalf("Unable to open a connection to database. %s", err)
@@ -48,7 +50,8 @@ func GetDatabaseConnection() *sqlx.DB {
 
 
 func RunMigrations() {
-	log := logger.Logger()
+	log := logger.Logger().
+		With(zap.String("method", "database.RunMigrations"))
 	m, err := migrate.New(MIGRATION_FILES_PATH, createDataSourceString())
 	if err != nil {
 		log.Fatalf("Error while running migrations: %s", err)

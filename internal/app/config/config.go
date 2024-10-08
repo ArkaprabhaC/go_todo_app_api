@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/ArkaprabhaC/go_todo_app_api/internal/app/logger"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 type Config struct {
@@ -30,7 +31,9 @@ const (
 )
 
 func ReadConfig() Config {
-	log := logger.Logger()
+	log := logger.Logger().
+		With(zap.String("method", "config.ReadConfig"))
+
 	config := Config{}
 	viper.AddConfigPath(CONFIGPATH)
 	viper.SetConfigName(CONFIGNAME)
