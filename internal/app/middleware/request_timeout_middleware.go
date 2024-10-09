@@ -11,7 +11,7 @@ import (
 
 func RequestTimeout(timeout time.Duration, errTimeout *errors.RequestTimeoutError) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(c.Request.Context(), 3 * time.Second)
+		ctx, cancel := context.WithTimeout(c.Request.Context(), timeout)
 		defer cancel()
 		c.Request = c.Request.WithContext(ctx)
 		finished := make(chan struct{})

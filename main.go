@@ -21,7 +21,9 @@ func main() {
 	route.InitializeRoutes(engine, db)
 
 	config := config.ReadConfig()
-	server_addr := fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port)
+	host := config.Server.Host
+	port := config.Server.Port
+	server_addr := fmt.Sprintf("%s:%d", host, port)
 	engine.Run(server_addr)
 
 }
