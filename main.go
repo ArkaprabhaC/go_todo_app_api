@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 
-	"github.com/ArkaprabhaC/go_todo_app_api/internal/app/config"
-	"github.com/ArkaprabhaC/go_todo_app_api/internal/app/database"
-	"github.com/ArkaprabhaC/go_todo_app_api/internal/app/logger"
-	"github.com/ArkaprabhaC/go_todo_app_api/internal/app/route"
+	"github.com/ArkaprabhaC/go_todo_app_api/app/config"
+	"github.com/ArkaprabhaC/go_todo_app_api/app/database"
+	"github.com/ArkaprabhaC/go_todo_app_api/app/logger"
+	"github.com/ArkaprabhaC/go_todo_app_api/app/route"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,7 +18,8 @@ func main() {
 	db := database.GetDatabaseConnection()
 
 	engine := gin.Default()
-	route.InitializeRoutes(engine, db)
+	notes_controller := IntializeNotesController(db)
+	route.InitializeRoutes(db, engine, notes_controller)
 
 	config := config.ReadConfig()
 	host := config.Server.Host
