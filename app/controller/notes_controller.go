@@ -23,6 +23,7 @@ func (nc NotesController) CreateNoteHandler(ctx *gin.Context) {
 	}
 	err := nc.notesService.CreateNote(createNoteRequest)
 	if err != nil {
+		log.Error(err)
 		ctx.AbortWithStatusJSON(500, errors.FAILURE_TO_ADD_NOTE_ERROR)
 		return
 	}
