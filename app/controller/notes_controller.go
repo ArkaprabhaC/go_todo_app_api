@@ -15,7 +15,7 @@ type NotesController struct {
 func (nc NotesController) CreateNoteHandler(ctx *gin.Context) {
 	log := logger.Logger()
 	log.Info("Received request to create note")
-	var createNoteRequest dto.CreateNoteRequest
+	var createNoteRequest dto_model.CreateNoteRequest
 	if err := ctx.BindJSON(&createNoteRequest); err != nil {
 		log.Errorf("Error while binding request JSON. %v", err)
 		ctx.AbortWithStatusJSON(400, errors.REQUEST_BODY_PARSE_ERROR)

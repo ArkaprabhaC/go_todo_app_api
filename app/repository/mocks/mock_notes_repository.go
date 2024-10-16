@@ -5,6 +5,9 @@
 package repository_mock
 
 import (
+	reflect "reflect"
+
+	db_model "github.com/ArkaprabhaC/go_todo_app_api/app/model/db"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -29,4 +32,18 @@ func NewMockNotesRepository(ctrl *gomock.Controller) *MockNotesRepository {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockNotesRepository) EXPECT() *MockNotesRepositoryMockRecorder {
 	return m.recorder
+}
+
+// AddNote mocks base method.
+func (m *MockNotesRepository) AddNote(note db_model.Note) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddNote", note)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddNote indicates an expected call of AddNote.
+func (mr *MockNotesRepositoryMockRecorder) AddNote(note interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNote", reflect.TypeOf((*MockNotesRepository)(nil).AddNote), note)
 }

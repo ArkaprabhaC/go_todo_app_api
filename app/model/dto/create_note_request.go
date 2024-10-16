@@ -1,4 +1,4 @@
-package dto
+package dto_model
 
 type CreateNoteRequest struct {
 	Title       string `json:"title" binding:"required"`

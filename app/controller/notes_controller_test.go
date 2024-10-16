@@ -43,7 +43,7 @@ func TestNotesControllerTestSuite(t *testing.T) {
 	suite.Run(t, new(NotesControllerTestSuite))
 }
 
-func (suite *NotesControllerTestSuite) Test_CreateNote_ShouldAddANoteSuccessfully() {
+func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldAddANoteSuccessfully() {
 
 	w := httptest.NewRecorder()
 	reqBody := []byte(`{"title": "New Note", "description": "Some note description"}`)
@@ -60,7 +60,7 @@ func (suite *NotesControllerTestSuite) Test_CreateNote_ShouldAddANoteSuccessfull
 	suite.Equal(expected, resp["message"])
 }
 
-func (suite *NotesControllerTestSuite) Test_CreateNote_ShouldThrowErrorIfPayloadHasMissingDescription() {
+func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorIfPayloadHasMissingDescription() {
 
 	w := httptest.NewRecorder()
 	reqBody := []byte(`{"title": "New Note"}`)
@@ -72,7 +72,7 @@ func (suite *NotesControllerTestSuite) Test_CreateNote_ShouldThrowErrorIfPayload
 	suite.Equal(400, w.Code)
 }
 
-func (suite *NotesControllerTestSuite) Test_CreateNote_ShouldThrowErrorIfPayloadHasMissingTitle() {
+func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorIfPayloadHasMissingTitle() {
 
 	w := httptest.NewRecorder()
 	reqBody := []byte(`{"name": "New Note"}`)
@@ -84,7 +84,7 @@ func (suite *NotesControllerTestSuite) Test_CreateNote_ShouldThrowErrorIfPayload
 	suite.Equal(400, w.Code)
 }
 
-func (suite *NotesControllerTestSuite) Test_CreateNote_ShouldThrowErrorWhenUnableToAddMessage() {
+func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorWhenUnableToAddMessage() {
 	w := httptest.NewRecorder()
 	reqBody := []byte(`{"title": "New Note", "description": "Some note description"}`)
 	bodyReader := bytes.NewReader(reqBody)
