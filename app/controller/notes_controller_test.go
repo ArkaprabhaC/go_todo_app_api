@@ -15,7 +15,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/suite"
-	sqlmock "github.com/zhashkevych/go-sqlxmock"
 )
 
 type NotesControllerTestSuite struct {
@@ -28,10 +27,7 @@ type NotesControllerTestSuite struct {
 }
 
 func (suite *NotesControllerTestSuite) SetupTest() {
-	mockDB, _, _ := sqlmock.New()
-	defer mockDB.Close()
-
-	suite.mockDB = sqlx.NewDb(mockDB, "postgres")
+	suite.mockDB = &sqlx.DB{}
 	suite.ctrl = gomock.NewController(suite.T())
 	suite.mockNotesService = service_mock.NewMockNotesService(suite.ctrl)
 	suite.notesController = controller.NewNotesController(suite.mockNotesService)

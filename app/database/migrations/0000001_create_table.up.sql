@@ -1,7 +1,7 @@
 
 
-CREATE TABLE IF NOT EXISTS persons (
+CREATE TABLE IF NOT EXISTS note (
     id SERIAL PRIMARY KEY NOT NULL,
-    name VARCHAR(255),
-    age INTEGER
+    title VARCHAR(255),
+    description VARCHAR(255),
 )

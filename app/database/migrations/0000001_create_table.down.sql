@@ -1,2 +1,2 @@
 
-DROP TABLE persons
+DROP TABLE note
