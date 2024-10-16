@@ -61,3 +61,4 @@ func (suite *NotesControllerTestSuite) Test_CreateNote_ShouldAddANoteSuccessfull
 	suite.Equal(201, w.Code)
 	suite.Equal(expected, resp["message"])
 }
+

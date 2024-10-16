@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"fmt"
-
 	"github.com/ArkaprabhaC/go_todo_app_api/app/logger"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/model/dto"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/model/dto/errors"
@@ -23,7 +21,6 @@ func (nc NotesController) CreateNoteHandler(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(400, errors.REQUEST_BODY_PARSE_ERROR)
 	}
 	err := nc.notesService.CreateNote(createNoteRequest)
-	fmt.Println(err)
 	if err != nil {
 		ctx.AbortWithStatusJSON(500, errors.FAILURE_TO_ADD_NOTE_ERROR)
 	}
