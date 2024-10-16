@@ -19,17 +19,18 @@ func (nc NotesController) CreateNoteHandler(ctx *gin.Context) {
 	if err := ctx.BindJSON(&createNoteRequest); err != nil {
 		log.Errorf("Error while binding request JSON. %v", err)
 		ctx.AbortWithStatusJSON(400, errors.REQUEST_BODY_PARSE_ERROR)
+		return
 	}
 	err := nc.notesService.CreateNote(createNoteRequest)
 	if err != nil {
 		ctx.AbortWithStatusJSON(500, errors.FAILURE_TO_ADD_NOTE_ERROR)
+		return
 	}
 	ctx.JSON(201, gin.H{
 		"message": "Note created successfully!",
 	})
 
 }
-
 
 func NewNotesController(service service.NotesService) NotesController {
 	return NotesController{

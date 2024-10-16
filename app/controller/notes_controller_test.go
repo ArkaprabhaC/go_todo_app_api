@@ -3,6 +3,7 @@ package controller_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,20 +18,19 @@ import (
 	sqlmock "github.com/zhashkevych/go-sqlxmock"
 )
 
-
 type NotesControllerTestSuite struct {
 	suite.Suite
-	mockDB *sqlx.DB
-	ctrl *gomock.Controller
-	engine *gin.Engine
+	mockDB           *sqlx.DB
+	ctrl             *gomock.Controller
+	engine           *gin.Engine
 	mockNotesService *service_mock.MockNotesService
-	notesController controller.NotesController
+	notesController  controller.NotesController
 }
 
 func (suite *NotesControllerTestSuite) SetupTest() {
 	mockDB, _, _ := sqlmock.New()
 	defer mockDB.Close()
-	
+
 	suite.mockDB = sqlx.NewDb(mockDB, "postgres")
 	suite.ctrl = gomock.NewController(suite.T())
 	suite.mockNotesService = service_mock.NewMockNotesService(suite.ctrl)
@@ -43,16 +43,14 @@ func TestNotesControllerTestSuite(t *testing.T) {
 	suite.Run(t, new(NotesControllerTestSuite))
 }
 
+func (suite *NotesControllerTestSuite) Test_CreateNote_ShouldAddANoteSuccessfully() {
 
-
-func (suite *NotesControllerTestSuite) Test_CreateNote_ShouldAddANoteSuccessfully () {
-	
 	w := httptest.NewRecorder()
 	reqBody := []byte(`{"title": "New Note", "description": "Some note description"}`)
 	bodyReader := bytes.NewReader(reqBody)
 	req, _ := http.NewRequest("POST", "/api/v1/notes/", bodyReader)
 	suite.mockNotesService.EXPECT().CreateNote(gomock.Any()).Return(nil)
-	
+
 	suite.engine.ServeHTTP(w, req)
 
 	resp := make(map[string]interface{})
@@ -62,3 +60,42 @@ func (suite *NotesControllerTestSuite) Test_CreateNote_ShouldAddANoteSuccessfull
 	suite.Equal(expected, resp["message"])
 }
 
+func (suite *NotesControllerTestSuite) Test_CreateNote_ShouldThrowErrorIfPayloadHasMissingDescription() {
+
+	w := httptest.NewRecorder()
+	reqBody := []byte(`{"title": "New Note"}`)
+	bodyReader := bytes.NewReader(reqBody)
+	req, _ := http.NewRequest("POST", "/api/v1/notes/", bodyReader)
+
+	suite.engine.ServeHTTP(w, req)
+
+	suite.Equal(400, w.Code)
+}
+
+func (suite *NotesControllerTestSuite) Test_CreateNote_ShouldThrowErrorIfPayloadHasMissingTitle() {
+
+	w := httptest.NewRecorder()
+	reqBody := []byte(`{"name": "New Note"}`)
+	bodyReader := bytes.NewReader(reqBody)
+	req, _ := http.NewRequest("POST", "/api/v1/notes/", bodyReader)
+
+	suite.engine.ServeHTTP(w, req)
+
+	suite.Equal(400, w.Code)
+}
+
+func (suite *NotesControllerTestSuite) Test_CreateNote_ShouldThrowErrorWhenUnableToAddMessage() {
+	w := httptest.NewRecorder()
+	reqBody := []byte(`{"title": "New Note", "description": "Some note description"}`)
+	bodyReader := bytes.NewReader(reqBody)
+	req, _ := http.NewRequest("POST", "/api/v1/notes/", bodyReader)
+	suite.mockNotesService.EXPECT().CreateNote(gomock.Any()).Return(errors.New("Some error occurred internally"))
+
+	suite.engine.ServeHTTP(w, req)
+
+	resp := make(map[string]interface{})
+	json.Unmarshal(w.Body.Bytes(), &resp)
+	expected := "Unable to add a note in the system"
+	suite.Equal(500, w.Code)
+	suite.Equal(expected, resp["message"])
+}
