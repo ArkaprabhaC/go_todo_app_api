@@ -5,9 +5,10 @@
 package service_mock
 
 import (
+	context "context"
 	reflect "reflect"
 
-	dto "github.com/ArkaprabhaC/go_todo_app_api/app/model/dto"
+	dto_model "github.com/ArkaprabhaC/go_todo_app_api/app/model/dto"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -35,15 +36,15 @@ func (m *MockNotesService) EXPECT() *MockNotesServiceMockRecorder {
 }
 
 // CreateNote mocks base method.
-func (m *MockNotesService) CreateNote(createNoteRequest dto.CreateNoteRequest) error {
+func (m *MockNotesService) CreateNote(ctx context.Context, createNoteRequest dto_model.CreateNoteRequest) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateNote", createNoteRequest)
+	ret := m.ctrl.Call(m, "CreateNote", ctx, createNoteRequest)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CreateNote indicates an expected call of CreateNote.
-func (mr *MockNotesServiceMockRecorder) CreateNote(createNoteRequest interface{}) *gomock.Call {
+func (mr *MockNotesServiceMockRecorder) CreateNote(ctx, createNoteRequest interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNote", reflect.TypeOf((*MockNotesService)(nil).CreateNote), createNoteRequest)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNote", reflect.TypeOf((*MockNotesService)(nil).CreateNote), ctx, createNoteRequest)
 }

@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -14,6 +15,7 @@ import (
 
 type NotesServiceTestSuite struct {
 	suite.Suite
+	context  	   context.Context
 	mockRepository *repository_mock.MockNotesRepository
 	service        service.NotesService
 }
@@ -24,6 +26,7 @@ func TestNotesServiceTestSuite(t *testing.T) {
 
 func (suite *NotesServiceTestSuite) SetupTest() {
 	ctrl := gomock.NewController(suite.T())
+	suite.context = context.TODO()
 	suite.mockRepository = repository_mock.NewMockNotesRepository(ctrl)
 	suite.service = service.NewNotesService(suite.mockRepository)
 }
@@ -39,9 +42,9 @@ func (suite *NotesServiceTestSuite) Test_CreateNote_ShouldAddNoteSuccessfully() 
 		Description: createNoteRequest.Description,
 	}
 
-	suite.mockRepository.EXPECT().AddNote(addNote).Return(nil)
+	suite.mockRepository.EXPECT().AddNote(suite.context, addNote).Return(nil)
 
-	err := suite.service.CreateNote(createNoteRequest)
+	err := suite.service.CreateNote(suite.context, createNoteRequest)
 	suite.Nil(err)
 }
 
@@ -56,9 +59,9 @@ func (suite *NotesServiceTestSuite) Test_CreateNote_ShouldThrowErrorIfUnableToAd
 		Description: createNoteRequest.Description,
 	}
 
-	suite.mockRepository.EXPECT().AddNote(addNote).Return(errors.New("Some repo error occurred"))
+	suite.mockRepository.EXPECT().AddNote(suite.context, addNote).Return(errors.New("Some repo error occurred"))
 
-	err := suite.service.CreateNote(createNoteRequest)
+	err := suite.service.CreateNote(suite.context, createNoteRequest)
 	suite.NotNil(err)
 	suite.Equal("Some repo error occurred", err.Error())
 }

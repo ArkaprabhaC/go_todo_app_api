@@ -45,7 +45,7 @@ func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldAddANoteSucc
 	reqBody := []byte(`{"title": "New Note", "description": "Some note description"}`)
 	bodyReader := bytes.NewReader(reqBody)
 	req, _ := http.NewRequest("POST", "/api/v1/notes/", bodyReader)
-	suite.mockNotesService.EXPECT().CreateNote(gomock.Any()).Return(nil)
+	suite.mockNotesService.EXPECT().CreateNote(gomock.Any(), gomock.Any()).Return(nil)
 
 	suite.engine.ServeHTTP(w, req)
 
@@ -85,7 +85,7 @@ func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorWh
 	reqBody := []byte(`{"title": "New Note", "description": "Some note description"}`)
 	bodyReader := bytes.NewReader(reqBody)
 	req, _ := http.NewRequest("POST", "/api/v1/notes/", bodyReader)
-	suite.mockNotesService.EXPECT().CreateNote(gomock.Any()).Return(errors.New("Some error occurred internally"))
+	suite.mockNotesService.EXPECT().CreateNote(gomock.Any(), gomock.Any()).Return(errors.New("Some error occurred internally"))
 
 	suite.engine.ServeHTTP(w, req)
 

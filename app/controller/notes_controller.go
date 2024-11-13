@@ -8,11 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type NotesController struct {
+type NotesController interface {
+	CreateNoteHandler(ctx *gin.Context)
+}
+type notesController struct {
 	notesService service.NotesService
 }
 
-func (nc NotesController) CreateNoteHandler(ctx *gin.Context) {
+func (nc notesController) CreateNoteHandler(ctx *gin.Context) {
 	log := logger.Logger()
 	log.Info("Received request to create note")
 	var createNoteRequest dto_model.CreateNoteRequest
@@ -21,7 +24,7 @@ func (nc NotesController) CreateNoteHandler(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(400, errors.REQUEST_BODY_PARSE_ERROR)
 		return
 	}
-	err := nc.notesService.CreateNote(createNoteRequest)
+	err := nc.notesService.CreateNote(ctx, createNoteRequest)
 	if err != nil {
 		log.Error(err)
 		ctx.AbortWithStatusJSON(500, errors.FAILURE_TO_ADD_NOTE_ERROR)
@@ -34,7 +37,7 @@ func (nc NotesController) CreateNoteHandler(ctx *gin.Context) {
 }
 
 func NewNotesController(service service.NotesService) NotesController {
-	return NotesController{
+	return &notesController{
 		notesService: service,
 	}
 }

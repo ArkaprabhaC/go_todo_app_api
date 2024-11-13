@@ -1,6 +1,10 @@
 package repository_test
 
 import (
+	"context"
+	"testing"
+
+	db_model "github.com/ArkaprabhaC/go_todo_app_api/app/model/db"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/repository"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/suite"
@@ -9,14 +13,43 @@ import (
 
 type NotesRepositoryTestSuite struct {
 	suite.Suite
-	db              *sqlx.DB
+	context 		context.Context
+	sqlMock         sqlmock.Sqlmock
+	mockDb			*sqlx.DB
 	notesRepository repository.NotesRepository
 }
 
-func (suite *NotesRepositoryTestSuite) SetupTest() {
-	mockDB, _, _ := sqlmock.New()
-	defer mockDB.Close()
+func TestNotesRepositoryTestSuite(t *testing.T) {
+	suite.Run(t, new(NotesRepositoryTestSuite))
+}
 
-	suite.db = sqlx.NewDb(mockDB, "postgres")
-	suite.notesRepository = repository.NewNotesRepository(suite.db)
+func (suite *NotesRepositoryTestSuite) SetupSuite() {
+	db, mock, err := sqlmock.Newx()
+	if err != nil {
+		suite.T().Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	suite.context = context.TODO()
+	suite.mockDb = db
+	suite.sqlMock = mock
+	suite.notesRepository = repository.NewNotesRepository(db)
+}
+
+func (suite *NotesRepositoryTestSuite) TearDownSuite() {
+	suite.mockDb.Close()
+}
+
+func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldAddNoteInDbSuccessfully() {
+	note := db_model.Note{
+		Title:       "Note 1",
+		Description: "Note description 1",
+	}
+
+	suite.sqlMock.ExpectBegin()
+	suite.sqlMock.ExpectExec(`INSERT INTO`).WillReturnResult(sqlmock.NewResult(1,1))
+	suite.sqlMock.ExpectCommit()
+
+	err := suite.notesRepository.AddNote(suite.context, note)
+	suite.Nil(err)
+	suite.Nil(suite.sqlMock.ExpectationsWereMet())
+
 }
