@@ -18,13 +18,14 @@ type notesService struct {
 }
 
 func (ns *notesService) CreateNote(ctx context.Context, createNoteRequest dto_model.CreateNoteRequest) error {
-	log := logger.Logger()
-	log.Info("Transforming createNoteRequest object into db_model.Note object")
+	log := logger.Logger().With("method", "service.notesService.CreateNote")
+	log.Info("Incoming create note request - adding note to database ")
 	noteDbModel := mapper.ConvertNotesDTOToNotesEntity(createNoteRequest)
 	err := ns.repository.AddNote(ctx, noteDbModel)
 	if err != nil {
 		log.Error(err)
 	}
+	log.Info("Successfully added note to database")
 	return err
 }
 

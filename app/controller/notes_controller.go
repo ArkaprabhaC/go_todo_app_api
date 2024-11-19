@@ -16,7 +16,7 @@ type notesController struct {
 }
 
 func (nc *notesController) CreateNoteHandler(ctx *gin.Context) {
-	log := logger.Logger()
+	log := logger.Logger().With("method", "controller.notesController.CreateNoteHandler")
 	log.Info("Received request to create note")
 	var createNoteRequest dto_model.CreateNoteRequest
 	if err := ctx.BindJSON(&createNoteRequest); err != nil {
@@ -30,6 +30,7 @@ func (nc *notesController) CreateNoteHandler(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(500, errors.FAILURE_TO_ADD_NOTE_ERROR)
 		return
 	}
+	log.Info("Request exiting..")
 	ctx.JSON(201, gin.H{
 		"message": "Note created successfully!",
 	})
