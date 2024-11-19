@@ -1,2 +1,2 @@
 
-DROP TABLE note
+DROP TABLE note;

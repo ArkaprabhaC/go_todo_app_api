@@ -12,15 +12,18 @@ import (
 
 func main() {
 	log := logger.Logger()
-	log.Infof("Starting up application...")
+	log.Infof("Starting db connection and running migration.")
 	
 	database.RunMigrations()
 	db := database.GetDatabaseConnection()
 
+	log.Info("Initializing engine, routes and dependencies")
+	gin.SetMode(gin.ReleaseMode)
 	engine := gin.Default()
 	notes_controller := IntializeNotesController(db)
 	route.InitializeRoutes(db, engine, notes_controller)
 
+	log.Info("Starting application")
 	config := config.ReadConfig()
 	host := config.Server.Host
 	port := config.Server.Port

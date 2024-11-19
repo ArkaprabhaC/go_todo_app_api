@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"errors"
 	"github.com/jmoiron/sqlx"
 
 	db_model "github.com/ArkaprabhaC/go_todo_app_api/app/model/db"
@@ -21,21 +20,19 @@ type notesRepository struct {
 func (n *notesRepository) AddNote(ctx context.Context, note db_model.Note) error {
 	tx, err := n.db.BeginTx(ctx, nil)
 	if err != nil {
-		return errors.New("unable to start transaction")
+		return err
 	}
-
 	defer tx.Rollback()
-
 	_, err = tx.Exec("INSERT INTO note(title, description) VALUES ($1, $2)", note.Title, note.Description)
 	if err != nil {
-		return errors.New("unable to insert note to the database")
+		return err
 	}
 
 	if err = tx.Commit(); err != nil {
-        return errors.New("unable to commit transaction")
-    }
+		return err
+	}
 
-	return err
+	return nil
 }
 
 func NewNotesRepository(db *sqlx.DB) NotesRepository {
