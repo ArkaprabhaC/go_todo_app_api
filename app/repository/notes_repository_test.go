@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	db_model "github.com/ArkaprabhaC/go_todo_app_api/app/model/db"
@@ -52,4 +53,34 @@ func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldAddNoteInDbSuccessfull
 	suite.Nil(err)
 	suite.Nil(suite.sqlMock.ExpectationsWereMet())
 
+}
+
+func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldThrowErrorIfQueryExecutionFails() {
+	note := db_model.Note{
+		Title:       "Note 1",
+		Description: "Note description 1",
+	}
+
+	suite.sqlMock.ExpectBegin()
+	suite.sqlMock.ExpectExec(`INSERT INTO`).WillReturnError(errors.New("some error occurred"))
+
+	err := suite.notesRepository.AddNote(suite.context, note)
+	suite.Error(err)
+	suite.Nil(suite.sqlMock.ExpectationsWereMet())
+}
+
+
+func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldThrowErrorIfTransactionFailsToCommit() {
+	note := db_model.Note{
+		Title:       "Note 1",
+		Description: "Note description 1",
+	}
+
+	suite.sqlMock.ExpectBegin()
+	suite.sqlMock.ExpectExec(`INSERT INTO`).WillReturnResult(sqlmock.NewResult(1,1))
+	suite.sqlMock.ExpectCommit().WillReturnError(errors.New("err occurred"))
+
+	err := suite.notesRepository.AddNote(suite.context, note)
+	suite.Error(err)
+	suite.Nil(suite.sqlMock.ExpectationsWereMet())
 }

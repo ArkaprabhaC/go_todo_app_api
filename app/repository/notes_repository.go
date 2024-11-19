@@ -18,7 +18,7 @@ type notesRepository struct {
 	db *sqlx.DB
 }
 
-func (n notesRepository) AddNote(ctx context.Context, note db_model.Note) error {
+func (n *notesRepository) AddNote(ctx context.Context, note db_model.Note) error {
 	tx, err := n.db.BeginTx(ctx, nil)
 	if err != nil {
 		return errors.New("unable to start transaction")
@@ -26,7 +26,7 @@ func (n notesRepository) AddNote(ctx context.Context, note db_model.Note) error 
 
 	defer tx.Rollback()
 
-	result, err := tx.Exec("INSERT INTO note(title, description) VALUES ($1, $2)", note.Title, note.Description)
+	_, err = tx.Exec("INSERT INTO note(title, description) VALUES ($1, $2)", note.Title, note.Description)
 	if err != nil {
 		return errors.New("unable to insert note to the database")
 	}
@@ -35,15 +35,11 @@ func (n notesRepository) AddNote(ctx context.Context, note db_model.Note) error 
         return errors.New("unable to commit transaction")
     }
 
-	rowsAffected, err := result.RowsAffected()
-	if err != nil || rowsAffected != 1{
-		return errors.New("unable to get rows affected or invalid rows affected after inserting note")
-	}
 	return err
 }
 
 func NewNotesRepository(db *sqlx.DB) NotesRepository {
-	return notesRepository{
+	return &notesRepository{
 		db,
 	}
 }
