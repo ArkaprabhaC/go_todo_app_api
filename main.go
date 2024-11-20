@@ -12,7 +12,7 @@ import (
 
 func main() {
 	log := logger.Logger()
-	log.Infof("Starting db connection and running migration.")
+	log.Infof("Getting db connection and running migration.")
 	
 	database.RunMigrations()
 	db := database.GetDatabaseConnection()
@@ -28,6 +28,6 @@ func main() {
 	host := config.Server.Host
 	port := config.Server.Port
 	server_addr := fmt.Sprintf("%s:%d", host, port)
+	log.Info("======Ready to accept requests======")
 	engine.Run(server_addr)
-
 }
