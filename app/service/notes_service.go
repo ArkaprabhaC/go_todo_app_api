@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	db_model "github.com/ArkaprabhaC/go_todo_app_api/app/model/db"
 
 	"github.com/ArkaprabhaC/go_todo_app_api/app/logger"
@@ -34,8 +35,17 @@ func (ns *notesService) GetNotes(ctx context.Context) (dto_model.GetNotesRespons
 func (ns *notesService) CreateNote(ctx context.Context, createNoteRequest dto_model.CreateNoteRequest) error {
 	log := logger.Logger()
 	log.Info("Incoming create note request - adding note to database ")
+	exists, err := ns.repository.NoteExists(ctx, createNoteRequest.Title)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	if exists {
+		log.Error("Note already exists")
+		return errors.New("note already exists")
+	}
 	noteDbModel := convertToNoteEntity(createNoteRequest)
-	err := ns.repository.AddNote(ctx, noteDbModel)
+	err = ns.repository.AddNote(ctx, noteDbModel)
 	if err != nil {
 		log.Error(err)
 		return err

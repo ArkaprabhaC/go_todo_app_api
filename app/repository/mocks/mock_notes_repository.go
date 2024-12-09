@@ -63,3 +63,18 @@ func (mr *MockNotesRepositoryMockRecorder) GetNotes(ctx interface{}) *gomock.Cal
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNotes", reflect.TypeOf((*MockNotesRepository)(nil).GetNotes), ctx)
 }
+
+// NoteExists mocks base method.
+func (m *MockNotesRepository) NoteExists(ctx context.Context, title string) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "NoteExists", ctx, title)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// NoteExists indicates an expected call of NoteExists.
+func (mr *MockNotesRepositoryMockRecorder) NoteExists(ctx, title interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NoteExists", reflect.TypeOf((*MockNotesRepository)(nil).NoteExists), ctx, title)
+}

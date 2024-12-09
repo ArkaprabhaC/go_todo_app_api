@@ -12,6 +12,7 @@ import (
 type NotesRepository interface {
 	AddNote(ctx context.Context, note dbmodel.Note) error
 	GetNotes(ctx context.Context) ([]dbmodel.Note, error)
+	NoteExists(ctx context.Context, title string) (bool, error)
 }
 
 var createNoteQuery = "INSERT INTO note(title, description) VALUES ($1, $2)"
@@ -19,6 +20,11 @@ var getAllNoteQuery = "SELECT title, description FROM note"
 
 type notesRepository struct {
 	db *sqlx.DB
+}
+
+func (n *notesRepository) NoteExists(ctx context.Context, title string) (bool, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (n *notesRepository) GetNotes(ctx context.Context) ([]dbmodel.Note, error) {

@@ -37,18 +37,43 @@ func (suite *NotesServiceTestSuite) Test_CreateNote_ShouldAddNoteSuccessfully() 
 		Description: "Some description",
 	}
 
-	addNote := db_model.Note{
+	noteEntity := db_model.Note{
 		Title:       createNoteRequest.Title,
 		Description: createNoteRequest.Description,
 	}
 
-	suite.mockRepository.EXPECT().AddNote(suite.context, addNote).Return(nil)
+	suite.mockRepository.EXPECT().NoteExists(suite.context, createNoteRequest.Title).Return(false, nil)
+	suite.mockRepository.EXPECT().AddNote(suite.context, noteEntity).Return(nil)
 
 	err := suite.service.CreateNote(suite.context, createNoteRequest)
 	suite.Nil(err)
 }
 
-func (suite *NotesServiceTestSuite) Test_CreateNote_ShouldThrowErrorIfUnableToAddNote() {
+func (suite *NotesServiceTestSuite) Test_CreateNote_ShouldThrowError_IfNoteWithSameTitleExists() {
+	createNoteRequest := dto_model.CreateNoteRequest{
+		Title:       "Title",
+		Description: "Some description",
+	}
+
+	suite.mockRepository.EXPECT().NoteExists(suite.context, createNoteRequest.Title).Return(true, nil)
+
+	err := suite.service.CreateNote(suite.context, createNoteRequest)
+	suite.Error(err)
+}
+
+func (suite *NotesServiceTestSuite) Test_CreateNote_ShouldThrowError_IfRepositoryErrors_WhileCheckingForNoteExists() {
+	createNoteRequest := dto_model.CreateNoteRequest{
+		Title:       "Title",
+		Description: "Some description",
+	}
+
+	suite.mockRepository.EXPECT().NoteExists(suite.context, createNoteRequest.Title).Return(false, errors.New("repository error"))
+
+	err := suite.service.CreateNote(suite.context, createNoteRequest)
+	suite.Error(err)
+}
+
+func (suite *NotesServiceTestSuite) Test_CreateNote_ShouldThrowError_IfRepositoryErrorsOut() {
 	createNoteRequest := dto_model.CreateNoteRequest{
 		Title:       "Title",
 		Description: "Some description",
@@ -59,11 +84,12 @@ func (suite *NotesServiceTestSuite) Test_CreateNote_ShouldThrowErrorIfUnableToAd
 		Description: createNoteRequest.Description,
 	}
 
-	suite.mockRepository.EXPECT().AddNote(suite.context, addNote).Return(errors.New("Some repo error occurred"))
+	suite.mockRepository.EXPECT().NoteExists(suite.context, createNoteRequest.Title).Return(false, nil)
+	suite.mockRepository.EXPECT().AddNote(suite.context, addNote).Return(errors.New("some repo error occurred"))
 
 	err := suite.service.CreateNote(suite.context, createNoteRequest)
 	suite.NotNil(err)
-	suite.Equal("Some repo error occurred", err.Error())
+	suite.Equal("some repo error occurred", err.Error())
 }
 
 func (suite *NotesServiceTestSuite) Test_GetNotes_ShouldGetNotesSuccessfully() {
@@ -83,7 +109,7 @@ func (suite *NotesServiceTestSuite) Test_GetNotes_ShouldGetNotesSuccessfully() {
 	suite.Equal(2, len(notesResponse.Notes))
 }
 
-func (suite *NotesServiceTestSuite) Test_GetNotes_ShouldThrowErrorIfRepositoryErrorsOut() {
+func (suite *NotesServiceTestSuite) Test_GetNotes_ShouldThrowError_IfRepositoryErrorsOut() {
 	suite.mockRepository.EXPECT().GetNotes(suite.context).Return(nil, errors.New("some repo error occurred"))
 	response, err := suite.service.GetNotes(suite.context)
 	suite.Error(err)
