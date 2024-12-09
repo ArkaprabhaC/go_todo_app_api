@@ -48,3 +48,18 @@ func (mr *MockNotesRepositoryMockRecorder) AddNote(ctx, note interface{}) *gomoc
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNote", reflect.TypeOf((*MockNotesRepository)(nil).AddNote), ctx, note)
 }
+
+// GetNotes mocks base method.
+func (m *MockNotesRepository) GetNotes(ctx context.Context) ([]db_model.Note, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNotes", ctx)
+	ret0, _ := ret[0].([]db_model.Note)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetNotes indicates an expected call of GetNotes.
+func (mr *MockNotesRepositoryMockRecorder) GetNotes(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNotes", reflect.TypeOf((*MockNotesRepository)(nil).GetNotes), ctx)
+}

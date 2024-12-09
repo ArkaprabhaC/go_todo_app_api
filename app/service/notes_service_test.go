@@ -15,7 +15,7 @@ import (
 
 type NotesServiceTestSuite struct {
 	suite.Suite
-	context  	   context.Context
+	context        context.Context
 	mockRepository *repository_mock.MockNotesRepository
 	service        service.NotesService
 }
@@ -64,4 +64,28 @@ func (suite *NotesServiceTestSuite) Test_CreateNote_ShouldThrowErrorIfUnableToAd
 	err := suite.service.CreateNote(suite.context, createNoteRequest)
 	suite.NotNil(err)
 	suite.Equal("Some repo error occurred", err.Error())
+}
+
+func (suite *NotesServiceTestSuite) Test_GetNotes_ShouldGetNotesSuccessfully() {
+	dbNotes := []db_model.Note{
+		{
+			Title:       "Title 1",
+			Description: "Description 1",
+		},
+		{
+			Title:       "Title 2",
+			Description: "Description 2",
+		},
+	}
+	suite.mockRepository.EXPECT().GetNotes(suite.context).Return(dbNotes, nil)
+	notesResponse, err := suite.service.GetNotes(suite.context)
+	suite.Nil(err)
+	suite.Equal(2, len(notesResponse.Notes))
+}
+
+func (suite *NotesServiceTestSuite) Test_GetNotes_ShouldThrowErrorIfRepositoryErrorsOut() {
+	suite.mockRepository.EXPECT().GetNotes(suite.context).Return(nil, errors.New("some repo error occurred"))
+	response, err := suite.service.GetNotes(suite.context)
+	suite.Error(err)
+	suite.Equal(dto_model.GetNotesResponse{}, response)
 }

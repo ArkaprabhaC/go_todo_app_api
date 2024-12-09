@@ -19,8 +19,25 @@ type notesService struct {
 }
 
 func (ns *notesService) GetNotes(ctx context.Context) (dto_model.GetNotesResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	log := logger.Logger()
+	log.Info("Getting notes from database")
+	dbNotes, err := ns.repository.GetNotes(ctx)
+	if err != nil {
+		log.Error(err)
+		return dto_model.GetNotesResponse{}, err
+	}
+	var notesResponse dto_model.GetNotesResponse
+	for _, val := range dbNotes {
+		notesResponse.Notes = append(
+			notesResponse.Notes,
+			dto_model.Note{
+				Title:       val.Title,
+				Description: val.Description,
+			},
+		)
+	}
+	log.Info("Successfully retrieved notes from database")
+	return notesResponse, nil
 }
 
 func (ns *notesService) CreateNote(ctx context.Context, createNoteRequest dto_model.CreateNoteRequest) error {
@@ -30,9 +47,10 @@ func (ns *notesService) CreateNote(ctx context.Context, createNoteRequest dto_mo
 	err := ns.repository.AddNote(ctx, noteDbModel)
 	if err != nil {
 		log.Error(err)
+		return err
 	}
 	log.Info("Successfully added note to database")
-	return err
+	return nil
 }
 
 func NewNotesService(repository repository.NotesRepository) NotesService {

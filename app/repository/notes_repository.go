@@ -11,12 +11,18 @@ import (
 //go:generate mockgen -destination=./mocks/mock_notes_repository.go -package repository_mock -source notes_repository.go
 type NotesRepository interface {
 	AddNote(ctx context.Context, note dbmodel.Note) error
+	GetNotes(ctx context.Context) ([]dbmodel.Note, error)
 }
 
 var createNoteQuery = "INSERT INTO note(title, description) VALUES ($1, $2)"
 
 type notesRepository struct {
 	db *sqlx.DB
+}
+
+func (n *notesRepository) GetNotes(ctx context.Context) ([]dbmodel.Note, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (n *notesRepository) AddNote(ctx context.Context, note dbmodel.Note) error {
