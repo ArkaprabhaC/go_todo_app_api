@@ -21,16 +21,23 @@ func NewRequestTimeoutError() *AppError {
 	}
 }
 
-var REQUEST_BODY_PARSE_ERROR = AppError{
+var RequestBodyParseError = AppError{
 	Status:    http.StatusText(http.StatusBadRequest),
 	Code:      http.StatusBadRequest,
 	Timestamp: time.Now().UTC(),
 	Message:   "Unable to parse request body",
 }
 
-var FAILURE_TO_ADD_NOTE_ERROR = AppError{
+var FailureToAddNoteError = AppError{
 	Status:    http.StatusText(http.StatusInternalServerError),
 	Code:      http.StatusInternalServerError,
 	Timestamp: time.Now().UTC(),
 	Message:   "Unable to add a note in the system",
+}
+
+var FailureGetNotes = AppError{
+	Status:    http.StatusText(http.StatusInternalServerError),
+	Code:      http.StatusInternalServerError,
+	Timestamp: time.Now().UTC(),
+	Message:   "Unable to get notes from the system",
 }

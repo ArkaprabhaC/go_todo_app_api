@@ -12,9 +12,15 @@ import (
 //go:generate mockgen -destination=./mocks/mock_notes_service.go -package service_mock -source notes_service.go
 type NotesService interface {
 	CreateNote(ctx context.Context, createNoteRequest dto_model.CreateNoteRequest) error
+	GetNotes(ctx context.Context) (dto_model.GetNotesResponse, error)
 }
 type notesService struct {
 	repository repository.NotesRepository
+}
+
+func (ns *notesService) GetNotes(ctx context.Context) (dto_model.GetNotesResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (ns *notesService) CreateNote(ctx context.Context, createNoteRequest dto_model.CreateNoteRequest) error {
