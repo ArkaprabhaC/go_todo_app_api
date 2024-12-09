@@ -15,14 +15,19 @@ type NotesRepository interface {
 }
 
 var createNoteQuery = "INSERT INTO note(title, description) VALUES ($1, $2)"
+var getAllNoteQuery = "SELECT title, description FROM note"
 
 type notesRepository struct {
 	db *sqlx.DB
 }
 
 func (n *notesRepository) GetNotes(ctx context.Context) ([]dbmodel.Note, error) {
-	//TODO implement me
-	panic("implement me")
+	var notes []dbmodel.Note
+	err := n.db.Select(&notes, getAllNoteQuery)
+	if err != nil {
+		return nil, err
+	}
+	return notes, nil
 }
 
 func (n *notesRepository) AddNote(ctx context.Context, note dbmodel.Note) error {
