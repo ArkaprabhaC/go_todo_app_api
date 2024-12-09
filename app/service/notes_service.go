@@ -34,7 +34,7 @@ func (ns *notesService) GetNotes(ctx context.Context) (dto_model.GetNotesRespons
 
 func (ns *notesService) CreateNote(ctx context.Context, createNoteRequest dto_model.CreateNoteRequest) error {
 	log := logger.Logger()
-	log.Info("Incoming create note request - adding note to database ")
+	log.Info("Checking if note already exists")
 	exists, err := ns.repository.NoteExists(ctx, createNoteRequest.Title)
 	if err != nil {
 		log.Error(err)
@@ -44,6 +44,7 @@ func (ns *notesService) CreateNote(ctx context.Context, createNoteRequest dto_mo
 		log.Error("Note already exists")
 		return errors.New("note already exists")
 	}
+	log.Info("Note does not exist. Creating note")
 	noteDbModel := convertToNoteEntity(createNoteRequest)
 	err = ns.repository.AddNote(ctx, noteDbModel)
 	if err != nil {
