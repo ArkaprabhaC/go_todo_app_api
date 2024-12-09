@@ -13,21 +13,21 @@ import (
 func main() {
 	log := logger.Logger()
 	log.Infof("Getting db connection and running migration.")
-	
+
 	database.RunMigrations()
 	db := database.GetDatabaseConnection()
 
 	log.Info("Initializing engine, routes and dependencies")
 	gin.SetMode(gin.ReleaseMode)
-	engine := gin.Default()
-	notes_controller := IntializeNotesController(db)
-	route.InitializeRoutes(db, engine, notes_controller)
+	engine := gin.New()
+	notesController := IntializeNotesController(db)
+	route.InitializeRoutes(engine, notesController)
 
 	log.Info("Starting application")
-	config := config.ReadConfig()
-	host := config.Server.Host
-	port := config.Server.Port
-	server_addr := fmt.Sprintf("%s:%d", host, port)
+	configVars := config.ReadConfig()
+	host := configVars.Server.Host
+	port := configVars.Server.Port
+	serverAddr := fmt.Sprintf("%s:%d", host, port)
 	log.Info("======Ready to accept requests======")
-	engine.Run(server_addr)
+	_ = engine.Run(serverAddr)
 }

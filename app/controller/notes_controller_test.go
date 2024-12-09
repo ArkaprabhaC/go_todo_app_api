@@ -44,13 +44,13 @@ func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldAddANoteSucc
 	w := httptest.NewRecorder()
 	reqBody := []byte(`{"title": "New Note", "description": "Some note description"}`)
 	bodyReader := bytes.NewReader(reqBody)
-	req, _ := http.NewRequest("POST", "/api/v1/notes/", bodyReader)
+	req, _ := http.NewRequest("POST", "/api/v1/notes", bodyReader)
 	suite.mockNotesService.EXPECT().CreateNote(gomock.Any(), gomock.Any()).Return(nil)
 
 	suite.engine.ServeHTTP(w, req)
 
 	resp := make(map[string]interface{})
-	json.Unmarshal(w.Body.Bytes(), &resp)
+	_ = json.Unmarshal(w.Body.Bytes(), &resp)
 	expected := "Note created successfully!"
 	suite.Equal(201, w.Code)
 	suite.Equal(expected, resp["message"])
@@ -61,7 +61,7 @@ func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorIf
 	w := httptest.NewRecorder()
 	reqBody := []byte(`{"title": "New Note"}`)
 	bodyReader := bytes.NewReader(reqBody)
-	req, _ := http.NewRequest("POST", "/api/v1/notes/", bodyReader)
+	req, _ := http.NewRequest("POST", "/api/v1/notes", bodyReader)
 
 	suite.engine.ServeHTTP(w, req)
 
@@ -73,7 +73,7 @@ func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorIf
 	w := httptest.NewRecorder()
 	reqBody := []byte(`{"name": "New Note"}`)
 	bodyReader := bytes.NewReader(reqBody)
-	req, _ := http.NewRequest("POST", "/api/v1/notes/", bodyReader)
+	req, _ := http.NewRequest("POST", "/api/v1/notes", bodyReader)
 
 	suite.engine.ServeHTTP(w, req)
 
@@ -84,14 +84,24 @@ func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorWh
 	w := httptest.NewRecorder()
 	reqBody := []byte(`{"title": "New Note", "description": "Some note description"}`)
 	bodyReader := bytes.NewReader(reqBody)
-	req, _ := http.NewRequest("POST", "/api/v1/notes/", bodyReader)
+	req, _ := http.NewRequest("POST", "/api/v1/notes", bodyReader)
 	suite.mockNotesService.EXPECT().CreateNote(gomock.Any(), gomock.Any()).Return(errors.New("Some error occurred internally"))
 
 	suite.engine.ServeHTTP(w, req)
 
 	resp := make(map[string]interface{})
-	json.Unmarshal(w.Body.Bytes(), &resp)
+	_ = json.Unmarshal(w.Body.Bytes(), &resp)
 	expected := "Unable to add a note in the system"
 	suite.Equal(500, w.Code)
 	suite.Equal(expected, resp["message"])
+}
+
+func (suite *NotesControllerTestSuite) Test_GetNotesHandler_ShouldDisplayAllNotes() {
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/api/v1/notes", nil)
+
+	suite.engine.ServeHTTP(w, req)
+
+	suite.Equal(200, w.Code)
+
 }

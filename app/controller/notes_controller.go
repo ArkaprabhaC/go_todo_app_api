@@ -10,13 +10,14 @@ import (
 
 type NotesController interface {
 	CreateNoteHandler(ctx *gin.Context)
+	GetNotesHandler(ctx *gin.Context)
 }
 type notesController struct {
 	notesService service.NotesService
 }
 
 func (nc *notesController) CreateNoteHandler(ctx *gin.Context) {
-	log := logger.Logger().With("method", "controller.notesController.CreateNoteHandler")
+	log := logger.Logger()
 	log.Info("Received request to create note")
 	var createNoteRequest dto_model.CreateNoteRequest
 	if err := ctx.BindJSON(&createNoteRequest); err != nil {
@@ -31,10 +32,13 @@ func (nc *notesController) CreateNoteHandler(ctx *gin.Context) {
 		return
 	}
 	log.Info("Request exiting..")
-	ctx.JSON(201, gin.H{
-		"message": "Note created successfully!",
+	ctx.JSON(200, gin.H{
+		"message": "Note created successfully",
 	})
+}
 
+func (nc *notesController) GetNotesHandler(ctx *gin.Context) {
+	ctx.JSON(500, gin.H{})
 }
 
 func NewNotesController(service service.NotesService) NotesController {
