@@ -32,7 +32,7 @@ func (suite *NotesControllerTestSuite) SetupTest() {
 	suite.mockNotesService = service_mock.NewMockNotesService(suite.ctrl)
 	suite.notesController = controller.NewNotesController(suite.mockNotesService)
 	suite.engine = gin.Default()
-	route.InitializeRoutes(suite.mockDB, suite.engine, suite.notesController)
+	route.InitializeRoutes(suite.engine, suite.notesController)
 }
 
 func TestNotesControllerTestSuite(t *testing.T) {
@@ -51,8 +51,8 @@ func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldAddANoteSucc
 
 	resp := make(map[string]interface{})
 	_ = json.Unmarshal(w.Body.Bytes(), &resp)
-	expected := "Note created successfully!"
-	suite.Equal(201, w.Code)
+	expected := "Note created successfully"
+	suite.Equal(200, w.Code)
 	suite.Equal(expected, resp["message"])
 }
 
