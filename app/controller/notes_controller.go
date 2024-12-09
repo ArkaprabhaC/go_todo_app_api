@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/ArkaprabhaC/go_todo_app_api/app/logger"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/model/dto"
-	"github.com/ArkaprabhaC/go_todo_app_api/app/model/dto/errors"
+	appErrors "github.com/ArkaprabhaC/go_todo_app_api/app/model/dto/errors"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/service"
 	"github.com/gin-gonic/gin"
 )
@@ -22,13 +22,13 @@ func (nc *notesController) CreateNoteHandler(ctx *gin.Context) {
 	var createNoteRequest dto_model.CreateNoteRequest
 	if err := ctx.BindJSON(&createNoteRequest); err != nil {
 		log.Error(err)
-		ctx.AbortWithStatusJSON(400, errors.RequestBodyParseError)
+		ctx.AbortWithStatusJSON(400, appErrors.RequestBodyParseError)
 		return
 	}
 	err := nc.notesService.CreateNote(ctx, createNoteRequest)
 	if err != nil {
 		log.Error(err)
-		ctx.AbortWithStatusJSON(500, errors.FailureToAddNoteError)
+		ctx.AbortWithStatusJSON(500, appErrors.FailureToAddNoteError)
 		return
 	}
 	log.Info("Request exiting..")
@@ -43,7 +43,7 @@ func (nc *notesController) GetNotesHandler(ctx *gin.Context) {
 	response, err := nc.notesService.GetNotes(ctx)
 	if err != nil {
 		log.Error(err)
-		ctx.AbortWithStatusJSON(500, errors.FailureGetNotes)
+		ctx.AbortWithStatusJSON(500, appErrors.FailureGetNotes)
 		return
 	}
 	log.Info("Request exiting..")

@@ -23,16 +23,19 @@ type NotesControllerTestSuite struct {
 	mockDB           *sqlx.DB
 	ctrl             *gomock.Controller
 	engine           *gin.Engine
+	recorder         *httptest.ResponseRecorder
+	context          *gin.Context
 	mockNotesService *service_mock.MockNotesService
 	notesController  controller.NotesController
 }
 
 func (suite *NotesControllerTestSuite) SetupTest() {
+	suite.recorder = httptest.NewRecorder()
+	suite.engine = gin.New()
 	suite.mockDB = &sqlx.DB{}
 	suite.ctrl = gomock.NewController(suite.T())
 	suite.mockNotesService = service_mock.NewMockNotesService(suite.ctrl)
 	suite.notesController = controller.NewNotesController(suite.mockNotesService)
-	suite.engine = gin.New()
 	route.InitializeRoutes(suite.engine, suite.notesController)
 }
 
@@ -41,60 +44,59 @@ func TestNotesControllerTestSuite(t *testing.T) {
 }
 
 func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldAddANoteSuccessfully() {
-
-	w := httptest.NewRecorder()
+	createNoteReq := dto_model.CreateNoteRequest{
+		Title:       "New Note",
+		Description: "Some note description",
+	}
 	reqBody := []byte(`{"title": "New Note", "description": "Some note description"}`)
 	bodyReader := bytes.NewReader(reqBody)
 	req, _ := http.NewRequest("POST", "/api/v1/notes", bodyReader)
 
-	suite.mockNotesService.EXPECT().CreateNote(gomock.Any(), gomock.Any()).Return(nil)
+	suite.mockNotesService.EXPECT().CreateNote(gomock.Any(), createNoteReq).Return(nil)
 
-	suite.engine.ServeHTTP(w, req)
+	suite.engine.ServeHTTP(suite.recorder, req)
 
 	resp := make(map[string]interface{})
-	_ = json.Unmarshal(w.Body.Bytes(), &resp)
+	_ = json.Unmarshal(suite.recorder.Body.Bytes(), &resp)
 	expected := "Note created successfully"
-	suite.Equal(200, w.Code)
+	suite.Equal(200, suite.recorder.Code)
 	suite.Equal(expected, resp["message"])
 }
 
 func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorIfPayloadHasMissingDescription() {
 
-	w := httptest.NewRecorder()
 	reqBody := []byte(`{"title": "New Note"}`)
 	bodyReader := bytes.NewReader(reqBody)
 	req, _ := http.NewRequest("POST", "/api/v1/notes", bodyReader)
 
-	suite.engine.ServeHTTP(w, req)
+	suite.engine.ServeHTTP(suite.recorder, req)
 
-	suite.Equal(400, w.Code)
+	suite.Equal(400, suite.recorder.Code)
 }
 
 func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorIfPayloadHasMissingTitle() {
 
-	w := httptest.NewRecorder()
 	reqBody := []byte(`{"name": "New Note"}`)
 	bodyReader := bytes.NewReader(reqBody)
 	req, _ := http.NewRequest("POST", "/api/v1/notes", bodyReader)
 
-	suite.engine.ServeHTTP(w, req)
+	suite.engine.ServeHTTP(suite.recorder, req)
 
-	suite.Equal(400, w.Code)
+	suite.Equal(400, suite.recorder.Code)
 }
 
 func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorWhenUnableToAddMessage() {
-	w := httptest.NewRecorder()
 	reqBody := []byte(`{"title": "New Note", "description": "Some note description"}`)
 	bodyReader := bytes.NewReader(reqBody)
 	req, _ := http.NewRequest("POST", "/api/v1/notes", bodyReader)
 	suite.mockNotesService.EXPECT().CreateNote(gomock.Any(), gomock.Any()).Return(errors.New("Some error occurred internally"))
 
-	suite.engine.ServeHTTP(w, req)
+	suite.engine.ServeHTTP(suite.recorder, req)
 
 	resp := make(map[string]interface{})
-	_ = json.Unmarshal(w.Body.Bytes(), &resp)
+	_ = json.Unmarshal(suite.recorder.Body.Bytes(), &resp)
 	expected := "Unable to add a note in the system"
-	suite.Equal(500, w.Code)
+	suite.Equal(500, suite.recorder.Code)
 	suite.Equal(expected, resp["message"])
 }
 
@@ -115,15 +117,14 @@ func (suite *NotesControllerTestSuite) Test_GetNotesHandler_ShouldDisplayAllNote
 			},
 		},
 	}
-	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/api/v1/notes", nil)
 	suite.mockNotesService.EXPECT().GetNotes(gomock.Any()).Return(stubbedResponse, nil)
 
-	suite.engine.ServeHTTP(w, req)
+	suite.engine.ServeHTTP(suite.recorder, req)
 
 	var actualResponse dto_model.GetNotesResponse
-	_ = json.Unmarshal(w.Body.Bytes(), &actualResponse)
-	suite.Equal(200, w.Code)
+	_ = json.Unmarshal(suite.recorder.Body.Bytes(), &actualResponse)
+	suite.Equal(200, suite.recorder.Code)
 	suite.Equal(stubbedResponse, actualResponse)
 
 }
