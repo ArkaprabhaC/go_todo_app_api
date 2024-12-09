@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
+	db_model "github.com/ArkaprabhaC/go_todo_app_api/app/model/db"
 
 	"github.com/ArkaprabhaC/go_todo_app_api/app/logger"
-	"github.com/ArkaprabhaC/go_todo_app_api/app/mapper"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/model/dto"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/repository"
 )
@@ -26,6 +26,25 @@ func (ns *notesService) GetNotes(ctx context.Context) (dto_model.GetNotesRespons
 		log.Error(err)
 		return dto_model.GetNotesResponse{}, err
 	}
+	notesResponse := convertToNotesResponse(dbNotes)
+	log.Info("Successfully retrieved notes from database")
+	return notesResponse, nil
+}
+
+func (ns *notesService) CreateNote(ctx context.Context, createNoteRequest dto_model.CreateNoteRequest) error {
+	log := logger.Logger()
+	log.Info("Incoming create note request - adding note to database ")
+	noteDbModel := convertToNoteEntity(createNoteRequest)
+	err := ns.repository.AddNote(ctx, noteDbModel)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	log.Info("Successfully added note to database")
+	return nil
+}
+
+func convertToNotesResponse(dbNotes []db_model.Note) dto_model.GetNotesResponse {
 	var notesResponse dto_model.GetNotesResponse
 	for _, val := range dbNotes {
 		notesResponse.Notes = append(
@@ -36,21 +55,15 @@ func (ns *notesService) GetNotes(ctx context.Context) (dto_model.GetNotesRespons
 			},
 		)
 	}
-	log.Info("Successfully retrieved notes from database")
-	return notesResponse, nil
+	return notesResponse
 }
 
-func (ns *notesService) CreateNote(ctx context.Context, createNoteRequest dto_model.CreateNoteRequest) error {
-	log := logger.Logger()
-	log.Info("Incoming create note request - adding note to database ")
-	noteDbModel := mapper.ConvertNotesDTOToNotesEntity(createNoteRequest)
-	err := ns.repository.AddNote(ctx, noteDbModel)
-	if err != nil {
-		log.Error(err)
-		return err
+func convertToNoteEntity(model dto_model.CreateNoteRequest) db_model.Note {
+	noteEntity := db_model.Note{
+		Title:       model.Title,
+		Description: model.Description,
 	}
-	log.Info("Successfully added note to database")
-	return nil
+	return noteEntity
 }
 
 func NewNotesService(repository repository.NotesRepository) NotesService {
