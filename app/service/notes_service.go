@@ -3,9 +3,8 @@ package service
 import (
 	"context"
 	"errors"
-	db_model "github.com/ArkaprabhaC/go_todo_app_api/app/model/db"
-
 	"github.com/ArkaprabhaC/go_todo_app_api/app/logger"
+	db_model "github.com/ArkaprabhaC/go_todo_app_api/app/model/db"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/model/dto"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/repository"
 )

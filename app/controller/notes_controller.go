@@ -6,6 +6,7 @@ import (
 	appErrors "github.com/ArkaprabhaC/go_todo_app_api/app/model/dto/errors"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/service"
 	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 type NotesController interface {
@@ -25,6 +26,7 @@ func (nc *notesController) CreateNoteHandler(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(400, appErrors.RequestBodyParseError)
 		return
 	}
+	createNoteRequest.Title = strings.TrimSpace(createNoteRequest.Title)
 	err := nc.notesService.CreateNote(ctx, createNoteRequest)
 	if err != nil {
 		log.Error(err)

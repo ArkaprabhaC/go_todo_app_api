@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	dto_model "github.com/ArkaprabhaC/go_todo_app_api/app/model/dto"
+	dtoModel "github.com/ArkaprabhaC/go_todo_app_api/app/model/dto"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -44,11 +44,31 @@ func TestNotesControllerTestSuite(t *testing.T) {
 }
 
 func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldAddANoteSuccessfully() {
-	createNoteReq := dto_model.CreateNoteRequest{
+	createNoteReq := dtoModel.CreateNoteRequest{
 		Title:       "New Note",
 		Description: "Some note description",
 	}
 	reqBody := []byte(`{"title": "New Note", "description": "Some note description"}`)
+	bodyReader := bytes.NewReader(reqBody)
+	req, _ := http.NewRequest("POST", "/api/v1/notes", bodyReader)
+
+	suite.mockNotesService.EXPECT().CreateNote(gomock.Any(), createNoteReq).Return(nil)
+
+	suite.engine.ServeHTTP(suite.recorder, req)
+
+	resp := make(map[string]interface{})
+	_ = json.Unmarshal(suite.recorder.Body.Bytes(), &resp)
+	expected := "Note created successfully"
+	suite.Equal(200, suite.recorder.Code)
+	suite.Equal(expected, resp["message"])
+}
+
+func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldAddANoteSuccessfully_AfterCleaningInputFields() {
+	createNoteReq := dtoModel.CreateNoteRequest{
+		Title:       "New Note",
+		Description: "Some note description",
+	}
+	reqBody := []byte(`{"title": "   New Note        ", "description": "Some note description"}`)
 	bodyReader := bytes.NewReader(reqBody)
 	req, _ := http.NewRequest("POST", "/api/v1/notes", bodyReader)
 
@@ -101,8 +121,8 @@ func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorWh
 }
 
 func (suite *NotesControllerTestSuite) Test_GetNotesHandler_ShouldDisplayAllNotes() {
-	stubbedResponse := dto_model.GetNotesResponse{
-		Notes: []dto_model.Note{
+	stubbedResponse := dtoModel.GetNotesResponse{
+		Notes: []dtoModel.Note{
 			{
 				Title:       "Title 1",
 				Description: "Description 1",
@@ -122,7 +142,7 @@ func (suite *NotesControllerTestSuite) Test_GetNotesHandler_ShouldDisplayAllNote
 
 	suite.engine.ServeHTTP(suite.recorder, req)
 
-	var actualResponse dto_model.GetNotesResponse
+	var actualResponse dtoModel.GetNotesResponse
 	_ = json.Unmarshal(suite.recorder.Body.Bytes(), &actualResponse)
 	suite.Equal(200, suite.recorder.Code)
 	suite.Equal(stubbedResponse, actualResponse)
@@ -132,7 +152,7 @@ func (suite *NotesControllerTestSuite) Test_GetNotesHandler_ShouldDisplayAllNote
 func (suite *NotesControllerTestSuite) Test_GetNotesHandler_ShouldReturnError_WhenServiceReturnsError() {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/api/v1/notes", nil)
-	suite.mockNotesService.EXPECT().GetNotes(gomock.Any()).Return(dto_model.GetNotesResponse{}, errors.New("some error occurred internally"))
+	suite.mockNotesService.EXPECT().GetNotes(gomock.Any()).Return(dtoModel.GetNotesResponse{}, errors.New("some error occurred internally"))
 
 	suite.engine.ServeHTTP(w, req)
 
