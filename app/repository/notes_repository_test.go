@@ -110,10 +110,37 @@ func (suite *NotesRepositoryTestSuite) Test_GetNotes_ShouldReturnError_IfQueryEx
 }
 
 func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnTrueIfNoteWithGivenTitleExists() {
+	suite.sqlMock.ExpectQuery("SELECT EXISTS(SELECT 1 FROM note WHERE title = $1)").
+		WillReturnRows(
+			sqlmock.NewRows([]string{"exists"}).
+				AddRow("t"),
+		)
+
+	exists, err := suite.notesRepository.NoteExists(suite.context, "note title 1")
+	suite.NoError(suite.sqlMock.ExpectationsWereMet())
+	suite.NoError(err)
+	suite.True(exists)
 }
 
 func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnFalseIfNoteWithGivenTitleNotExists() {
+	suite.sqlMock.ExpectQuery("SELECT EXISTS(SELECT 1 FROM note WHERE title = $1)").
+		WillReturnRows(
+			sqlmock.NewRows([]string{"exists"}).
+				AddRow("f"),
+		)
+
+	exists, err := suite.notesRepository.NoteExists(suite.context, "note title 2")
+	suite.NoError(suite.sqlMock.ExpectationsWereMet())
+	suite.NoError(err)
+	suite.False(exists)
 }
 
 func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnErrorIfErrorThrownWhileCheckingForNoteExistence() {
+	suite.sqlMock.ExpectQuery("SELECT EXISTS(SELECT 1 FROM note WHERE title = $1)").
+		WillReturnError(errors.New("some error occurred"))
+
+	exists, err := suite.notesRepository.NoteExists(suite.context, "note title 3")
+	suite.NoError(suite.sqlMock.ExpectationsWereMet())
+	suite.Error(err)
+	suite.False(exists)
 }
