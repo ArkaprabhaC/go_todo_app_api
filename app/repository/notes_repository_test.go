@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	db_model "github.com/ArkaprabhaC/go_todo_app_api/app/model/db"
+	dbModel "github.com/ArkaprabhaC/go_todo_app_api/app/model/db"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/repository"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/suite"
@@ -36,11 +36,11 @@ func (suite *NotesRepositoryTestSuite) SetupSuite() {
 }
 
 func (suite *NotesRepositoryTestSuite) TearDownSuite() {
-	suite.mockDb.Close()
+	_ = suite.mockDb.Close()
 }
 
 func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldAddNoteInDbSuccessfully() {
-	note := db_model.Note{
+	note := dbModel.Note{
 		Title:       "Note 1",
 		Description: "Note description 1",
 	}
@@ -56,7 +56,7 @@ func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldAddNoteInDbSuccessfull
 }
 
 func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldThrowErrorIfQueryExecutionFails() {
-	note := db_model.Note{
+	note := dbModel.Note{
 		Title:       "Note 1",
 		Description: "Note description 1",
 	}
@@ -70,7 +70,7 @@ func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldThrowErrorIfQueryExecu
 }
 
 func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldThrowErrorIfTransactionFailsToCommit() {
-	note := db_model.Note{
+	note := dbModel.Note{
 		Title:       "Note 1",
 		Description: "Note description 1",
 	}
