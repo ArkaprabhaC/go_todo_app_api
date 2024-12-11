@@ -22,15 +22,13 @@ func (nc *notesController) CreateNoteHandler(ctx *gin.Context) {
 	log.Info("Received request to create note")
 	var createNoteRequest dto_model.CreateNoteRequest
 	if err := ctx.BindJSON(&createNoteRequest); err != nil {
-		log.Error(err)
-		ctx.AbortWithStatusJSON(400, appErrors.RequestBodyParseError)
+		ctx.AbortWithStatusJSON(400, appErrors.FailureBadRequest)
 		return
 	}
 	createNoteRequest.Title = strings.TrimSpace(createNoteRequest.Title)
 	err := nc.notesService.CreateNote(ctx, createNoteRequest)
 	if err != nil {
-		log.Error(err)
-		ctx.AbortWithStatusJSON(500, appErrors.FailureToAddNoteError)
+		ctx.AbortWithStatusJSON(500, err)
 		return
 	}
 	log.Info("Request exiting..")
@@ -44,8 +42,7 @@ func (nc *notesController) GetNotesHandler(ctx *gin.Context) {
 	log.Info("Received request to get all the notes")
 	response, err := nc.notesService.GetNotes(ctx)
 	if err != nil {
-		log.Error(err)
-		ctx.AbortWithStatusJSON(500, appErrors.FailureGetNotes)
+		ctx.AbortWithStatusJSON(500, err)
 		return
 	}
 	log.Info("Request exiting..")

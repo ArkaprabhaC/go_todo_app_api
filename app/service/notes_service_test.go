@@ -89,7 +89,7 @@ func (suite *NotesServiceTestSuite) Test_CreateNote_ShouldThrowError_IfRepositor
 
 	err := suite.service.CreateNote(suite.context, createNoteRequest)
 	suite.NotNil(err)
-	suite.Equal("some repo error occurred", err.Error())
+	suite.Equal("Unable to add a note in the system", err.Error())
 }
 
 func (suite *NotesServiceTestSuite) Test_GetNotes_ShouldGetNotesSuccessfully() {

@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
-	"errors"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/logger"
 	db_model "github.com/ArkaprabhaC/go_todo_app_api/app/model/db"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/model/dto"
+	appErrors "github.com/ArkaprabhaC/go_todo_app_api/app/model/dto/errors"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/repository"
 )
 
@@ -24,7 +24,7 @@ func (ns *notesService) GetNotes(ctx context.Context) (dto_model.GetNotesRespons
 	dbNotes, err := ns.repository.GetNotes(ctx)
 	if err != nil {
 		log.Error(err)
-		return dto_model.GetNotesResponse{}, err
+		return dto_model.GetNotesResponse{}, &appErrors.FailureGetNotes
 	}
 	notesResponse := convertToNotesResponse(dbNotes)
 	log.Info("Successfully retrieved notes from database")
@@ -37,18 +37,18 @@ func (ns *notesService) CreateNote(ctx context.Context, createNoteRequest dto_mo
 	exists, err := ns.repository.NoteExists(ctx, createNoteRequest.Title)
 	if err != nil {
 		log.Error(err)
-		return err
+		return &appErrors.FailureAddNoteError
 	}
 	if exists {
 		log.Error("Note already exists")
-		return errors.New("note already exists")
+		return &appErrors.FailureNoteAlreadyExists
 	}
 	log.Info("Note does not exist. Creating note")
 	noteDbModel := convertToNoteEntity(createNoteRequest)
 	err = ns.repository.AddNote(ctx, noteDbModel)
 	if err != nil {
 		log.Error(err)
-		return err
+		return &appErrors.FailureAddNoteError
 	}
 	log.Info("Successfully added note to database")
 	return nil

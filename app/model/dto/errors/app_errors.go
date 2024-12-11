@@ -12,23 +12,18 @@ type AppError struct {
 	Message   string    `json:"message"`
 }
 
-func NewRequestTimeoutError() *AppError {
-	return &AppError{
-		Status:    http.StatusText(http.StatusRequestTimeout),
-		Code:      http.StatusRequestTimeout,
-		Timestamp: time.Now().UTC(),
-		Message:   "Request timed out",
-	}
+func (e *AppError) Error() string {
+	return e.Message
 }
 
-var RequestBodyParseError = AppError{
+var FailureBadRequest = AppError{
 	Status:    http.StatusText(http.StatusBadRequest),
 	Code:      http.StatusBadRequest,
 	Timestamp: time.Now().UTC(),
 	Message:   "Unable to parse request body",
 }
 
-var FailureToAddNoteError = AppError{
+var FailureAddNoteError = AppError{
 	Status:    http.StatusText(http.StatusInternalServerError),
 	Code:      http.StatusInternalServerError,
 	Timestamp: time.Now().UTC(),
@@ -40,4 +35,11 @@ var FailureGetNotes = AppError{
 	Code:      http.StatusInternalServerError,
 	Timestamp: time.Now().UTC(),
 	Message:   "Unable to get notes from the system",
+}
+
+var FailureNoteAlreadyExists = AppError{
+	Status:    http.StatusText(http.StatusInternalServerError),
+	Code:      http.StatusInternalServerError,
+	Timestamp: time.Now().UTC(),
+	Message:   "Note with same title already exists. Please use a different title and try again",
 }

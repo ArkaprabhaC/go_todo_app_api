@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	dtoModel "github.com/ArkaprabhaC/go_todo_app_api/app/model/dto"
+	appErrors "github.com/ArkaprabhaC/go_todo_app_api/app/model/dto/errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -109,7 +110,7 @@ func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorWh
 	reqBody := []byte(`{"title": "New Note", "description": "Some note description"}`)
 	bodyReader := bytes.NewReader(reqBody)
 	req, _ := http.NewRequest("POST", "/api/v1/notes", bodyReader)
-	suite.mockNotesService.EXPECT().CreateNote(gomock.Any(), gomock.Any()).Return(errors.New("Some error occurred internally"))
+	suite.mockNotesService.EXPECT().CreateNote(gomock.Any(), gomock.Any()).Return(&appErrors.FailureAddNoteError)
 
 	suite.engine.ServeHTTP(suite.recorder, req)
 
