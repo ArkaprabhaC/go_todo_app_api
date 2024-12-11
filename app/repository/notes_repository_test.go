@@ -25,7 +25,7 @@ func TestNotesRepositoryTestSuite(t *testing.T) {
 }
 
 func (suite *NotesRepositoryTestSuite) SetupSuite() {
-	db, mock, err := sqlmock.Newx()
+	db, mock, err := sqlmock.Newx(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		suite.T().Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
@@ -46,7 +46,7 @@ func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldAddNoteInDbSuccessfull
 	}
 
 	suite.sqlMock.ExpectBegin()
-	suite.sqlMock.ExpectExec(`INSERT INTO`).WillReturnResult(sqlmock.NewResult(1, 1))
+	suite.sqlMock.ExpectExec("INSERT INTO note(title, description) VALUES ($1, $2)").WillReturnResult(sqlmock.NewResult(1, 1))
 	suite.sqlMock.ExpectCommit()
 
 	err := suite.notesRepository.AddNote(suite.context, note)
@@ -62,7 +62,7 @@ func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldThrowErrorIfQueryExecu
 	}
 
 	suite.sqlMock.ExpectBegin()
-	suite.sqlMock.ExpectExec(`INSERT INTO`).WillReturnError(errors.New("some error occurred"))
+	suite.sqlMock.ExpectExec(`INSERT INTO note(title, description) VALUES ($1, $2)`).WillReturnError(errors.New("some error occurred"))
 
 	err := suite.notesRepository.AddNote(suite.context, note)
 	suite.Error(err)
@@ -76,7 +76,7 @@ func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldThrowErrorIfTransactio
 	}
 
 	suite.sqlMock.ExpectBegin()
-	suite.sqlMock.ExpectExec(`INSERT INTO`).WillReturnResult(sqlmock.NewResult(1, 1))
+	suite.sqlMock.ExpectExec(`INSERT INTO note(title, description) VALUES ($1, $2)`).WillReturnResult(sqlmock.NewResult(1, 1))
 	suite.sqlMock.ExpectCommit().WillReturnError(errors.New("err occurred"))
 
 	err := suite.notesRepository.AddNote(suite.context, note)
@@ -107,4 +107,13 @@ func (suite *NotesRepositoryTestSuite) Test_GetNotes_ShouldReturnError_IfQueryEx
 	_, err := suite.notesRepository.GetNotes(suite.context)
 	suite.Nil(suite.sqlMock.ExpectationsWereMet())
 	suite.Error(err)
+}
+
+func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnTrueIfNoteWithGivenTitleExists() {
+}
+
+func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnFalseIfNoteWithGivenTitleNotExists() {
+}
+
+func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnErrorIfErrorThrownWhileCheckingForNoteExistence() {
 }
