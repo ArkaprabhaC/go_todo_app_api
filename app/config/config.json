@@ -7,8 +7,8 @@
     "host_name": "localhost",
     "port": 5432,
     "db_name": "todo_notes_db",
-    "username": "todo_notes",
-    "password": "jys124d@!",
+    "username": "todo_notes_user",
+    "password": "8v8TJY7tZhvO",
     "ssl_mode": "disable"
   }
 }

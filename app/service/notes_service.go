@@ -55,7 +55,7 @@ func (ns *notesService) CreateNote(ctx context.Context, createNoteRequest dto_mo
 }
 
 func convertToNotesResponse(dbNotes []db_model.Note) dto_model.GetNotesResponse {
-	var notesResponse dto_model.GetNotesResponse
+	notesResponse := dto_model.GetNotesResponse{Notes: make([]dto_model.Note, 0)}
 	for _, val := range dbNotes {
 		notesResponse.Notes = append(
 			notesResponse.Notes,

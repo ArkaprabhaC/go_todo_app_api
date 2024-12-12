@@ -1,0 +1,3 @@
+CREATE DATABASE todo_notes_db;
+CREATE USER todo_notes_user WITH ENCRYPTED PASSWORD '8v8TJY7tZhvO';
+GRANT ALL PRIVILEGES ON DATABASE todo_notes_db TO todo_notes_user;

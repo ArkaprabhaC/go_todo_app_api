@@ -109,6 +109,15 @@ func (suite *NotesServiceTestSuite) Test_GetNotes_ShouldGetNotesSuccessfully() {
 	suite.Equal(2, len(notesResponse.Notes))
 }
 
+func (suite *NotesServiceTestSuite) Test_GetNotes_ShouldReturnEmptyArray_IfNoNotesAddedInSystem() {
+	dbNotes := make([]db_model.Note, 0)
+	suite.mockRepository.EXPECT().GetNotes(suite.context).Return(dbNotes, nil)
+	notesResponse, err := suite.service.GetNotes(suite.context)
+	suite.Nil(err)
+	suite.NotNil(notesResponse.Notes)
+	suite.Equal(0, len(notesResponse.Notes))
+}
+
 func (suite *NotesServiceTestSuite) Test_GetNotes_ShouldThrowError_IfRepositoryErrorsOut() {
 	suite.mockRepository.EXPECT().GetNotes(suite.context).Return(nil, errors.New("some repo error occurred"))
 	response, err := suite.service.GetNotes(suite.context)
