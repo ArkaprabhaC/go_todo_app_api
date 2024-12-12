@@ -106,6 +106,39 @@ func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorIf
 	suite.Equal(400, suite.recorder.Code)
 }
 
+func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorIfPayloadHasEmptyTitle() {
+
+	reqBody := []byte(`{"title": ""}`)
+	bodyReader := bytes.NewReader(reqBody)
+	req, _ := http.NewRequest("POST", "/api/v1/notes", bodyReader)
+
+	suite.engine.ServeHTTP(suite.recorder, req)
+
+	suite.Equal(400, suite.recorder.Code)
+}
+
+func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorIfPayloadHasNoDescription() {
+
+	reqBody := []byte(`{"title": "New Note"}`)
+	bodyReader := bytes.NewReader(reqBody)
+	req, _ := http.NewRequest("POST", "/api/v1/notes", bodyReader)
+
+	suite.engine.ServeHTTP(suite.recorder, req)
+
+	suite.Equal(400, suite.recorder.Code)
+}
+
+func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorIfPayloadHasEmptyDescription() {
+
+	reqBody := []byte(`{"title": "New Note", "description": ""}`)
+	bodyReader := bytes.NewReader(reqBody)
+	req, _ := http.NewRequest("POST", "/api/v1/notes", bodyReader)
+
+	suite.engine.ServeHTTP(suite.recorder, req)
+
+	suite.Equal(400, suite.recorder.Code)
+}
+
 func (suite *NotesControllerTestSuite) Test_CreateNoteHandler_ShouldThrowErrorWhenUnableToAddMessage() {
 	reqBody := []byte(`{"title": "New Note", "description": "Some note description"}`)
 	bodyReader := bytes.NewReader(reqBody)

@@ -22,6 +22,7 @@ func (nc *notesController) CreateNoteHandler(ctx *gin.Context) {
 	log.Info("Received request to create note")
 	var createNoteRequest dto_model.CreateNoteRequest
 	if err := ctx.BindJSON(&createNoteRequest); err != nil {
+		log.Error("Failed to bind request body")
 		ctx.AbortWithStatusJSON(400, appErrors.FailureBadRequest)
 		return
 	}
