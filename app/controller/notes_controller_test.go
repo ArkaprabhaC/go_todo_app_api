@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	dtoModel "github.com/ArkaprabhaC/go_todo_app_api/app/model/dto"
-	appErrors "github.com/ArkaprabhaC/go_todo_app_api/app/model/dto/errors"
+	appErrors "github.com/ArkaprabhaC/go_todo_app_api/app/model/errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"

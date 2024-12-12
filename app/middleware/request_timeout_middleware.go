@@ -3,9 +3,9 @@ package middleware
 import (
 	"context"
 	"fmt"
+	"github.com/ArkaprabhaC/go_todo_app_api/app/model/errors"
 	"time"
 
-	"github.com/ArkaprabhaC/go_todo_app_api/app/model/dto/errors"
 	"github.com/gin-gonic/gin"
 )
 

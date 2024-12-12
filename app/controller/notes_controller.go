@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/ArkaprabhaC/go_todo_app_api/app/logger"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/model/dto"
-	appErrors "github.com/ArkaprabhaC/go_todo_app_api/app/model/dto/errors"
+	appErrors "github.com/ArkaprabhaC/go_todo_app_api/app/model/errors"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/service"
 	"github.com/gin-gonic/gin"
 	"strings"

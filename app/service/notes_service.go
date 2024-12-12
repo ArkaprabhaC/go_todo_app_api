@@ -5,7 +5,7 @@ import (
 	"github.com/ArkaprabhaC/go_todo_app_api/app/logger"
 	db_model "github.com/ArkaprabhaC/go_todo_app_api/app/model/db"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/model/dto"
-	appErrors "github.com/ArkaprabhaC/go_todo_app_api/app/model/dto/errors"
+	appErrors "github.com/ArkaprabhaC/go_todo_app_api/app/model/errors"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/repository"
 )
 
