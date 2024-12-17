@@ -20,6 +20,7 @@ const (
 	createNoteQuery = "INSERT INTO note(title, description) VALUES ($1, $2)"
 	getAllNoteQuery = "SELECT title, description FROM note"
 	checkNoteExists = "SELECT EXISTS(SELECT 1 FROM note WHERE title = $1)"
+	deleteNoteQuery = "DELETE FROM note WHERE title = $1"
 )
 
 type notesRepository struct {
@@ -27,8 +28,22 @@ type notesRepository struct {
 }
 
 func (n *notesRepository) DeleteNote(ctx context.Context, title string) error {
-	//TODO implement me
-	panic("implement me")
+	tx, err := n.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(deleteNoteQuery, title)
+	if err != nil {
+		if err := tx.Rollback(); err != nil {
+			return err
+		}
+		return err
+	}
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+
 }
 
 func (n *notesRepository) NoteExists(ctx context.Context, title string) (bool, error) {

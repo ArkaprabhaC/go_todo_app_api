@@ -144,3 +144,33 @@ func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnError_IfErrorT
 	suite.Error(err)
 	suite.False(exists)
 }
+
+func (suite *NotesRepositoryTestSuite) Test_DeleteNote_ShouldDeleteNoteSuccessfully() {
+	suite.sqlMock.ExpectBegin()
+	suite.sqlMock.ExpectExec("DELETE FROM note WHERE title = $1").WillReturnResult(sqlmock.NewResult(1, 1))
+	suite.sqlMock.ExpectCommit()
+
+	err := suite.notesRepository.DeleteNote(suite.context, "My title")
+	suite.Nil(err)
+	suite.Nil(suite.sqlMock.ExpectationsWereMet())
+
+}
+
+func (suite *NotesRepositoryTestSuite) Test_DeleteNote_ShouldThrowError_IfQueryExecutionFails() {
+	suite.sqlMock.ExpectBegin()
+	suite.sqlMock.ExpectExec(`DELETE FROM note WHERE title = $1`).WillReturnError(errors.New("some error occurred"))
+
+	err := suite.notesRepository.DeleteNote(suite.context, "My title")
+	suite.Error(err)
+	suite.Nil(suite.sqlMock.ExpectationsWereMet())
+}
+
+func (suite *NotesRepositoryTestSuite) Test_DeleteNote_ShouldThrowError_IfTransactionFailsToCommit() {
+	suite.sqlMock.ExpectBegin()
+	suite.sqlMock.ExpectExec(`DELETE FROM note WHERE title = $1`).WillReturnResult(sqlmock.NewResult(1, 1))
+	suite.sqlMock.ExpectCommit().WillReturnError(errors.New("err occurred"))
+
+	err := suite.notesRepository.DeleteNote(suite.context, "My title")
+	suite.Error(err)
+	suite.Nil(suite.sqlMock.ExpectationsWereMet())
+}
