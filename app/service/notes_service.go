@@ -13,9 +13,15 @@ import (
 type NotesService interface {
 	CreateNote(ctx context.Context, createNoteRequest dto_model.CreateNoteRequest) error
 	GetNotes(ctx context.Context) (dto_model.GetNotesResponse, error)
+	DeleteNote(ctx context.Context, id int) error
 }
 type notesService struct {
 	repository repository.NotesRepository
+}
+
+func (ns *notesService) DeleteNote(ctx context.Context, id int) error {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (ns *notesService) GetNotes(ctx context.Context) (dto_model.GetNotesResponse, error) {

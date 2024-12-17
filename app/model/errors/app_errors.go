@@ -20,7 +20,7 @@ var FailureBadRequest = AppError{
 	Status:    http.StatusText(http.StatusBadRequest),
 	Code:      http.StatusBadRequest,
 	Timestamp: time.Now().UTC(),
-	Message:   "Unable to parse request body",
+	Message:   "Unable to parse request",
 }
 
 var FailureAddNoteError = AppError{
@@ -42,4 +42,11 @@ var FailureNoteAlreadyExists = AppError{
 	Code:      http.StatusInternalServerError,
 	Timestamp: time.Now().UTC(),
 	Message:   "Note with same title already exists. Please use a different title and try again",
+}
+
+var FailureNoteNotFound = AppError{
+	Status:    http.StatusText(http.StatusNotFound),
+	Code:      http.StatusNotFound,
+	Timestamp: time.Now().UTC(),
+	Message:   "Note with given Id is not found",
 }

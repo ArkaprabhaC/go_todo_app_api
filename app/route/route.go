@@ -7,12 +7,14 @@ import (
 
 func InitializeRoutes(engine *gin.Engine, notesController controller.NotesController) {
 
-	rgV1 := engine.Group("/api/v1")
+	rgv1 := engine.Group("/api/v1")
 	{
-		route := rgV1.Group("/notes")
+		route := rgv1.Group("/notes")
 		{
 			route.POST("", notesController.CreateNoteHandler)
 			route.GET("", notesController.GetNotesHandler)
+			route.DELETE("/:id", notesController.DeleteNoteHandler)
+
 		}
 	}
 
