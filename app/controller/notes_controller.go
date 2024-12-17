@@ -1,13 +1,13 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/logger"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/model/dto"
 	appErrors "github.com/ArkaprabhaC/go_todo_app_api/app/model/errors"
 	"github.com/ArkaprabhaC/go_todo_app_api/app/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -23,14 +23,13 @@ type notesController struct {
 func (nc *notesController) DeleteNoteHandler(ctx *gin.Context) {
 	log := logger.Logger()
 	log.Info("Received request to delete note")
-	noteIdString := ctx.Param("id")
-	noteId, err := strconv.Atoi(noteIdString)
-	if err != nil {
-		log.Error("Failed to convert id to int")
+	noteTitle := strings.TrimSpace(ctx.Param("noteTitle"))
+	if noteTitle == "" {
+		log.Error("Failed to parse request")
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, appErrors.FailureBadRequest)
 		return
 	}
-	err = nc.notesService.DeleteNote(ctx, noteId)
+	err := nc.notesService.DeleteNote(ctx, noteTitle)
 	if err != nil {
 		log.Error("Failed to delete note")
 		ctx.AbortWithStatusJSON(http.StatusNotFound, appErrors.FailureNoteNotFound)
@@ -38,7 +37,7 @@ func (nc *notesController) DeleteNoteHandler(ctx *gin.Context) {
 	}
 	log.Info("Request exiting..")
 	ctx.JSON(http.StatusOK, gin.H{
-		"message": "Note with ID 123 deleted",
+		"message": fmt.Sprintf("Note with title \"%s\" deleted", noteTitle),
 	})
 }
 

@@ -49,6 +49,20 @@ func (mr *MockNotesRepositoryMockRecorder) AddNote(ctx, note interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNote", reflect.TypeOf((*MockNotesRepository)(nil).AddNote), ctx, note)
 }
 
+// DeleteNote mocks base method.
+func (m *MockNotesRepository) DeleteNote(ctx context.Context, title string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteNote", ctx, title)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteNote indicates an expected call of DeleteNote.
+func (mr *MockNotesRepositoryMockRecorder) DeleteNote(ctx, title interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNote", reflect.TypeOf((*MockNotesRepository)(nil).DeleteNote), ctx, title)
+}
+
 // GetNotes mocks base method.
 func (m *MockNotesRepository) GetNotes(ctx context.Context) ([]db_model.Note, error) {
 	m.ctrl.T.Helper()

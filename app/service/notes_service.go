@@ -13,15 +13,18 @@ import (
 type NotesService interface {
 	CreateNote(ctx context.Context, createNoteRequest dto_model.CreateNoteRequest) error
 	GetNotes(ctx context.Context) (dto_model.GetNotesResponse, error)
-	DeleteNote(ctx context.Context, id int) error
+	DeleteNote(ctx context.Context, title string) error
 }
 type notesService struct {
 	repository repository.NotesRepository
 }
 
-func (ns *notesService) DeleteNote(ctx context.Context, id int) error {
-	//TODO implement me
-	panic("implement me")
+func (ns *notesService) DeleteNote(ctx context.Context, title string) error {
+	log := logger.Logger()
+	log.Info("Checking if note exists in database")
+
+	err := ns.repository.DeleteNote(ctx, title)
+	return err
 }
 
 func (ns *notesService) GetNotes(ctx context.Context) (dto_model.GetNotesResponse, error) {

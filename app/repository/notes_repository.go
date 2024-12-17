@@ -13,6 +13,7 @@ type NotesRepository interface {
 	AddNote(ctx context.Context, note dbmodel.Note) error
 	GetNotes(ctx context.Context) ([]dbmodel.Note, error)
 	NoteExists(ctx context.Context, title string) (bool, error)
+	DeleteNote(ctx context.Context, title string) error
 }
 
 const (
@@ -23,6 +24,11 @@ const (
 
 type notesRepository struct {
 	db *sqlx.DB
+}
+
+func (n *notesRepository) DeleteNote(ctx context.Context, title string) error {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (n *notesRepository) NoteExists(ctx context.Context, title string) (bool, error) {

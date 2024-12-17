@@ -48,5 +48,5 @@ var FailureNoteNotFound = AppError{
 	Status:    http.StatusText(http.StatusNotFound),
 	Code:      http.StatusNotFound,
 	Timestamp: time.Now().UTC(),
-	Message:   "Note with given Id is not found",
+	Message:   "Note with given title is not found",
 }

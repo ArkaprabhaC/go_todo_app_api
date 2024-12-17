@@ -50,17 +50,17 @@ func (mr *MockNotesServiceMockRecorder) CreateNote(ctx, createNoteRequest interf
 }
 
 // DeleteNote mocks base method.
-func (m *MockNotesService) DeleteNote(ctx context.Context, id int) error {
+func (m *MockNotesService) DeleteNote(ctx context.Context, title string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteNote", ctx, id)
+	ret := m.ctrl.Call(m, "DeleteNote", ctx, title)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // DeleteNote indicates an expected call of DeleteNote.
-func (mr *MockNotesServiceMockRecorder) DeleteNote(ctx, id interface{}) *gomock.Call {
+func (mr *MockNotesServiceMockRecorder) DeleteNote(ctx, title interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNote", reflect.TypeOf((*MockNotesService)(nil).DeleteNote), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNote", reflect.TypeOf((*MockNotesService)(nil).DeleteNote), ctx, title)
 }
 
 // GetNotes mocks base method.

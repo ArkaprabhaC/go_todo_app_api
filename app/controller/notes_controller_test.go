@@ -193,32 +193,32 @@ func (suite *NotesControllerTestSuite) Test_GetNotesHandler_ShouldReturnError_Wh
 	suite.Equal(500, suite.recorder.Code)
 }
 
-func (suite *NotesControllerTestSuite) Test_DeleteNotesHandler_ShouldDeleteNoteProvidedId() {
-	req, _ := http.NewRequest("DELETE", "/api/v1/notes/123", nil)
-	suite.mockNotesService.EXPECT().DeleteNote(gomock.Any(), 123).Return(nil)
+func (suite *NotesControllerTestSuite) Test_DeleteNotesHandler_ShouldDeleteNoteProvidedTitle() {
+	req, _ := http.NewRequest("DELETE", "/api/v1/notes/My New Note", nil)
+	suite.mockNotesService.EXPECT().DeleteNote(gomock.Any(), "My New Note").Return(nil)
 
 	suite.engine.ServeHTTP(suite.recorder, req)
 
 	resp := make(map[string]interface{})
 	_ = json.Unmarshal(suite.recorder.Body.Bytes(), &resp)
 	suite.Equal(200, suite.recorder.Code)
-	suite.Equal("Note with ID 123 deleted", resp["message"])
+	suite.Equal("Note with title \"My New Note\" deleted", resp["message"])
 }
 
-func (suite *NotesControllerTestSuite) Test_DeleteNotesHandler_ShouldThrowError_IfIdCannotBeConvertedToInteger() {
-	req, _ := http.NewRequest("DELETE", "/api/v1/notes/some-id", nil)
+func (suite *NotesControllerTestSuite) Test_DeleteNotesHandler_ShouldThrowError_IfTitleContainsSpacesOnly() {
+	req, _ := http.NewRequest("DELETE", "/api/v1/notes/      ", nil)
 	suite.engine.ServeHTTP(suite.recorder, req)
 	suite.Equal(400, suite.recorder.Code)
 }
 
 func (suite *NotesControllerTestSuite) Test_DeleteNotesHandler_ShouldThrowError_IfNoteWithGivenIdNotFound() {
-	req, _ := http.NewRequest("DELETE", "/api/v1/notes/123", nil)
-	suite.mockNotesService.EXPECT().DeleteNote(gomock.Any(), 123).Return(errors.New("note not found"))
+	req, _ := http.NewRequest("DELETE", "/api/v1/notes/My Title", nil)
+	suite.mockNotesService.EXPECT().DeleteNote(gomock.Any(), "My Title").Return(errors.New("note not found"))
 
 	suite.engine.ServeHTTP(suite.recorder, req)
 
 	var actualErr appErrors.AppError
 	_ = json.Unmarshal(suite.recorder.Body.Bytes(), &actualErr)
 	suite.Equal(404, suite.recorder.Code)
-	suite.Equal("Note with given Id is not found", actualErr.Message)
+	suite.Equal("Note with given title is not found", actualErr.Message)
 }

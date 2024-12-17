@@ -124,3 +124,10 @@ func (suite *NotesServiceTestSuite) Test_GetNotes_ShouldThrowError_IfRepositoryE
 	suite.Error(err)
 	suite.Equal(dto_model.GetNotesResponse{}, response)
 }
+
+func (suite *NotesServiceTestSuite) Test_DeleteNote_ShouldDeleteNoteSuccessfully() {
+	suite.mockRepository.EXPECT().NoteExists(suite.context, "Title").Return(nil)
+	suite.mockRepository.EXPECT().DeleteNote(suite.context, 123).Return(nil)
+	err := suite.service.DeleteNote(suite.context, 123)
+	suite.NoError(err)
+}

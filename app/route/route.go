@@ -13,7 +13,7 @@ func InitializeRoutes(engine *gin.Engine, notesController controller.NotesContro
 		{
 			route.POST("", notesController.CreateNoteHandler)
 			route.GET("", notesController.GetNotesHandler)
-			route.DELETE("/:id", notesController.DeleteNoteHandler)
+			route.DELETE("/:noteTitle", notesController.DeleteNoteHandler)
 
 		}
 	}
