@@ -55,7 +55,7 @@ func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldAddNoteInDbSuccessfull
 
 }
 
-func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldThrowErrorIfQueryExecutionFails() {
+func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldThrowError_IfQueryExecutionFails() {
 	note := dbModel.Note{
 		Title:       "Note 1",
 		Description: "Note description 1",
@@ -69,7 +69,7 @@ func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldThrowErrorIfQueryExecu
 	suite.Nil(suite.sqlMock.ExpectationsWereMet())
 }
 
-func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldThrowErrorIfTransactionFailsToCommit() {
+func (suite *NotesRepositoryTestSuite) Test_AddNote_ShouldThrowError_IfTransactionFailsToCommit() {
 	note := dbModel.Note{
 		Title:       "Note 1",
 		Description: "Note description 1",
@@ -109,7 +109,7 @@ func (suite *NotesRepositoryTestSuite) Test_GetNotes_ShouldReturnError_IfQueryEx
 	suite.Error(err)
 }
 
-func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnTrueIfNoteWithGivenTitleExists() {
+func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnTrue_IfNoteWithGivenTitleExists() {
 	suite.sqlMock.ExpectQuery("SELECT EXISTS(SELECT 1 FROM note WHERE title = $1)").
 		WillReturnRows(
 			sqlmock.NewRows([]string{"exists"}).
@@ -122,7 +122,7 @@ func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnTrueIfNoteWith
 	suite.True(exists)
 }
 
-func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnFalseIfNoteWithGivenTitleNotExists() {
+func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnFalse_IfNoteWithGivenTitleNotExists() {
 	suite.sqlMock.ExpectQuery("SELECT EXISTS(SELECT 1 FROM note WHERE title = $1)").
 		WillReturnRows(
 			sqlmock.NewRows([]string{"exists"}).
@@ -135,7 +135,7 @@ func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnFalseIfNoteWit
 	suite.False(exists)
 }
 
-func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnErrorIfErrorThrownWhileCheckingForNoteExistence() {
+func (suite *NotesRepositoryTestSuite) Test_NoteExist_ShouldReturnError_IfErrorThrownWhileCheckingForNoteExistence() {
 	suite.sqlMock.ExpectQuery("SELECT EXISTS(SELECT 1 FROM note WHERE title = $1)").
 		WillReturnError(errors.New("some error occurred"))
 
