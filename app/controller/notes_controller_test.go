@@ -211,14 +211,11 @@ func (suite *NotesControllerTestSuite) Test_DeleteNotesHandler_ShouldThrowError_
 	suite.Equal(400, suite.recorder.Code)
 }
 
-func (suite *NotesControllerTestSuite) Test_DeleteNotesHandler_ShouldThrowError_IfNoteWithGivenIdNotFound() {
+func (suite *NotesControllerTestSuite) Test_DeleteNotesHandler_ShouldThrowError_IfServiceThrowsError() {
 	req, _ := http.NewRequest("DELETE", "/api/v1/notes/My Title", nil)
-	suite.mockNotesService.EXPECT().DeleteNote(gomock.Any(), "My Title").Return(errors.New("note not found"))
+	suite.mockNotesService.EXPECT().DeleteNote(gomock.Any(), "My Title").Return(errors.New("some error"))
 
 	suite.engine.ServeHTTP(suite.recorder, req)
 
-	var actualErr appErrors.AppError
-	_ = json.Unmarshal(suite.recorder.Body.Bytes(), &actualErr)
 	suite.Equal(404, suite.recorder.Code)
-	suite.Equal("Note with given title is not found", actualErr.Message)
 }

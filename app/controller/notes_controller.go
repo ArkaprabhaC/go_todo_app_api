@@ -32,7 +32,7 @@ func (nc *notesController) DeleteNoteHandler(ctx *gin.Context) {
 	err := nc.notesService.DeleteNote(ctx, noteTitle)
 	if err != nil {
 		log.Error("Failed to delete note")
-		ctx.AbortWithStatusJSON(http.StatusNotFound, appErrors.FailureNoteNotFound)
+		ctx.AbortWithStatusJSON(http.StatusNotFound, err)
 		return
 	}
 	log.Info("Request exiting..")

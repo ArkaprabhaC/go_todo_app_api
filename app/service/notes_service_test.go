@@ -126,8 +126,27 @@ func (suite *NotesServiceTestSuite) Test_GetNotes_ShouldThrowError_IfRepositoryE
 }
 
 func (suite *NotesServiceTestSuite) Test_DeleteNote_ShouldDeleteNoteSuccessfully() {
-	suite.mockRepository.EXPECT().NoteExists(suite.context, "Title").Return(nil)
-	suite.mockRepository.EXPECT().DeleteNote(suite.context, 123).Return(nil)
-	err := suite.service.DeleteNote(suite.context, 123)
+	suite.mockRepository.EXPECT().NoteExists(suite.context, "My Note Title").Return(true, nil)
+	suite.mockRepository.EXPECT().DeleteNote(suite.context, "My Note Title").Return(nil)
+	err := suite.service.DeleteNote(suite.context, "My Note Title")
 	suite.NoError(err)
+}
+
+func (suite *NotesServiceTestSuite) Test_DeleteNote_ShouldThrowError_IfErrorOccursWhileCheckingForNoteExists() {
+	suite.mockRepository.EXPECT().NoteExists(suite.context, "My Note Title").Return(true, errors.New("some repo error occurred"))
+	err := suite.service.DeleteNote(suite.context, "My Note Title")
+	suite.Error(err)
+}
+
+func (suite *NotesServiceTestSuite) Test_DeleteNote_ShouldThrowError_IfNoteDoesNotExists() {
+	suite.mockRepository.EXPECT().NoteExists(suite.context, "My Note Title").Return(false, nil)
+	err := suite.service.DeleteNote(suite.context, "My Note Title")
+	suite.Error(err)
+}
+
+func (suite *NotesServiceTestSuite) Test_DeleteNote_ShouldThrowError_IfRepositoryErrorsOut() {
+	suite.mockRepository.EXPECT().NoteExists(suite.context, "My Note Title").Return(true, nil)
+	suite.mockRepository.EXPECT().DeleteNote(suite.context, "My Note Title").Return(errors.New("some repo error occurred"))
+	err := suite.service.DeleteNote(suite.context, "My Note Title")
+	suite.Error(err)
 }

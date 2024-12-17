@@ -22,8 +22,17 @@ type notesService struct {
 func (ns *notesService) DeleteNote(ctx context.Context, title string) error {
 	log := logger.Logger()
 	log.Info("Checking if note exists in database")
-
-	err := ns.repository.DeleteNote(ctx, title)
+	exists, err := ns.repository.NoteExists(ctx, title)
+	if err != nil {
+		log.Error(err)
+		return &appErrors.FailureAddNoteError
+	}
+	if !exists {
+		log.Error("Note does not exists")
+		return &appErrors.FailureNoteNotFound
+	}
+	log.Info("Note does exist. Deleting note")
+	err = ns.repository.DeleteNote(ctx, title)
 	return err
 }
 
